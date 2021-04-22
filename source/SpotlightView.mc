@@ -128,48 +128,30 @@ class SpotlightView extends WatchUi.WatchFace {
         //    the offset from center of clock to the focal point.
         // Combine them with screen center to bring focal point
         // to the center of the screen.
-        var clock_center_x = screen_center_x - FOCAL_POINT * clock_radius * Math.sin(angle);
-        var clock_center_y = screen_center_y + FOCAL_POINT * clock_radius * Math.cos(angle);
+        // Add 0.5f to turn the implicit floor that drawLine does
+        // into a round.
+        // This is much much faster than using Math.round(), which
+        // isn't available on older platforms. We're only dealing
+        // with positive X/Y values, so this works nicely.
+        var clock_center_x as Float = screen_center_x - FOCAL_POINT * clock_radius * Math.sin(angle) + 0.5f;
+        var clock_center_y as Float = screen_center_y + FOCAL_POINT * clock_radius * Math.cos(angle) + 0.5f;
         var index_guess = (72.0f * angle / (2 * Math.PI)).toNumber();
         var dist;
-        // For performance reasons, we do this once, instead of every loop
-        if (Math has :round) {
-            for (var i = 0; i < NUM_HASH_MARKS; ++i) {
-            	dist = (i - index_guess).abs();
-            	if (dist <= 9 || dist >= 63) {
-	                dc.setPenWidth(hash_marks_width[i]);
-	                // outside X, outside Y, inside X, inside Y
-	                var xo = Math.round(clock_center_x + clock_radius * hash_marks_clock_xo[i]);
-	                var yo = Math.round(clock_center_y + clock_radius * hash_marks_clock_yo[i]);
-	                var xi = Math.round(clock_center_x + clock_radius * hash_marks_clock_xi[i]);
-	                var yi = Math.round(clock_center_y + clock_radius * hash_marks_clock_yi[i]);
-	                dc.drawLine(xo, yo, xi, yi);
-	                if (hash_marks_label[i] != "") {
-	                    var text_x = Math.round(clock_center_x + clock_radius * hash_marks_clock_xo[i] * TEXT_POSITION);
-	                    var text_y = Math.round(clock_center_y + clock_radius * hash_marks_clock_yo[i] * TEXT_POSITION);
-	                    dc.drawText(text_x, text_y, TEXT_FONT, hash_marks_label[i],
-	                                Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
-	                }
-	            }
-            }
-        } else {
-            // Should be identical to above, but without Math.round
-            for (var i = 0; i < NUM_HASH_MARKS; ++i) {
-            	dist = (i - index_guess).abs();
-            	if (dist <= 9 || dist >= 63) {
-                    dc.setPenWidth(hash_marks_width[i]);
-                    // outside X, outside Y, inside X, inside Y
-                    var xo = clock_center_x + clock_radius * hash_marks_clock_xo[i];
-                    var yo = clock_center_y + clock_radius * hash_marks_clock_yo[i];
-                    var xi = clock_center_x + clock_radius * hash_marks_clock_xi[i];
-                    var yi = clock_center_y + clock_radius * hash_marks_clock_yi[i];
-                    dc.drawLine(xo, yo, xi, yi);
-                    if (hash_marks_label[i] != "") {
-                        var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * TEXT_POSITION;
-                        var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * TEXT_POSITION;
-                        dc.drawText(text_x, text_y, TEXT_FONT, hash_marks_label[i],
-                                    Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
-                    }
+        for (var i = 0; i < NUM_HASH_MARKS; ++i) {
+            dist = (i - index_guess).abs();
+            if (dist <= 9 || dist >= 63) {
+                dc.setPenWidth(hash_marks_width[i]);
+                // outside X, outside Y, inside X, inside Y
+                var xo = clock_center_x + clock_radius * hash_marks_clock_xo[i];
+                var yo = clock_center_y + clock_radius * hash_marks_clock_yo[i];
+                var xi = clock_center_x + clock_radius * hash_marks_clock_xi[i];
+                var yi = clock_center_y + clock_radius * hash_marks_clock_yi[i];
+                dc.drawLine(xo, yo, xi, yi);
+                if (hash_marks_label[i] != "") {
+                    var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * TEXT_POSITION;
+                    var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * TEXT_POSITION;
+                    dc.drawText(text_x, text_y, TEXT_FONT, hash_marks_label[i],
+                                Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
                 }
             }
         }
@@ -180,17 +162,12 @@ class SpotlightView extends WatchUi.WatchFace {
         dc.setPenWidth(2);
         var x1, y1, x2, y2 as Number;
         // 2 * radius so that we definitely overshoot, for square screens
-        if (Math has :round) {
-            x1 = Math.round(screen_center_x + 2 * screen_radius * Math.sin(angle));
-            y1 = Math.round(screen_center_y - 2 * screen_radius * Math.cos(angle));
-            x2 = Math.round(screen_center_x - 2 * screen_radius * Math.sin(angle));
-            y2 = Math.round(screen_center_y + 2 * screen_radius * Math.cos(angle));
-        } else {
-            x1 = screen_center_x + 2 * screen_radius * Math.sin(angle);
-            y1 = screen_center_y - 2 * screen_radius * Math.cos(angle);
-            x2 = screen_center_x - 2 * screen_radius * Math.sin(angle);
-            y2 = screen_center_y + 2 * screen_radius * Math.cos(angle);
-        }
+        // Again, adding 0.5f to do implicit round instead of floor in
+        // drawLine.
+        x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
+        y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
+        x2 = screen_center_x - 2 * screen_radius * Math.sin(angle) + 0.5f;
+        y2 = screen_center_y + 2 * screen_radius * Math.cos(angle) + 0.5f;
         dc.drawLine(x1, y1, x2, y2);
     }
 
