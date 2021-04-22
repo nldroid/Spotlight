@@ -8,4 +8,26 @@
     <string id="textPositionPrompt">Where the numbers should be positioned. 0 is the center of the clock, 1 is the edge of the clock</string>
     <string id="textVisibleTitle">Number visibility</string>
     <string id="textVisiblePrompt">Whether or not to show the numbers for the hours</string>
+    <string id="fontTitle">Font</string>
+    <string id="fontPrompt">Font used for numbers. Some might break things on older watches.</string>
+    <string id="font0">Extra tiny Connect IQ font</string>
+    <string id="font1">Tiny Connect IQ font</string>
+    <string id="font2">Small Connect IQ font</string>
+    <string id="font3">Medium Connect IQ font</string>
+    <string id="font4">Large Connect IQ font</string>
+    <string id="font5">Normal size number only Connect IQ font</string>
+    <string id="font6">Medium size number only Connect IQ font</string>
+    <string id="font7">Large size number only Connect IQ font</string>
+    <string id="font8">Huge size number only Connect IQ font</string>
+    <string id="font9">Extra tiny system font</string>
+    <string id="font10">Tiny system font</string>
+    <string id="font11">Small system font</string>
+    <string id="font12">Medium system font</string>
+    <string id="font13">Large system font</string>
+    <string id="font14">Normal size number only system font</string>
+    <string id="font15">Medium size number only system font</string>
+    <string id="font16">Large size number only system font</string>
+    <string id="font17">Huge size number only system font</string>
+    <string id="font18">Glance text font</string>
+    <string id="font19">Glance number only font </string>
 </strings>

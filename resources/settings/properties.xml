@@ -4,6 +4,7 @@
     	<property id="focalPoint" type="float">0.8</property>
     	<property id="textPosition" type="float">0.8</property>
         <property id="textVisible" type="boolean">true</property>
+        <property id="font" type="number">2</property>
     </properties>
 
     <settings>
@@ -18,6 +19,30 @@
 		</setting>
         <setting propertyKey="@Properties.textVisible" title="@Strings.textVisibleTitle" prompt="@Strings.textVisiblePrompt">
             <settingConfig type="boolean" />
+		</setting>
+        <setting propertyKey="@Properties.font" title="@Strings.fontTitle" prompt="@Strings.fontPrompt">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.font0</listEntry>
+                <listEntry value="1">@Strings.font1</listEntry>
+                <listEntry value="2">@Strings.font2</listEntry>
+                <listEntry value="3">@Strings.font3</listEntry>
+                <listEntry value="4">@Strings.font4</listEntry>
+                <listEntry value="5">@Strings.font5</listEntry>
+                <listEntry value="6">@Strings.font6</listEntry>
+                <listEntry value="7">@Strings.font7</listEntry>
+                <listEntry value="8">@Strings.font8</listEntry>
+                <listEntry value="9">@Strings.font9</listEntry>
+                <listEntry value="10">@Strings.font10</listEntry>
+                <listEntry value="11">@Strings.font11</listEntry>
+                <listEntry value="12">@Strings.font12</listEntry>
+                <listEntry value="13">@Strings.font13</listEntry>
+                <listEntry value="14">@Strings.font14</listEntry>
+                <listEntry value="15">@Strings.font15</listEntry>
+                <listEntry value="16">@Strings.font16</listEntry>
+                <listEntry value="17">@Strings.font17</listEntry>
+                <listEntry value="18">@Strings.font18</listEntry>
+                <listEntry value="19">@Strings.font19</listEntry>
+            </settingConfig>
 		</setting>
     </settings>
 </resources>

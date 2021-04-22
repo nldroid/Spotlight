@@ -19,7 +19,7 @@ class SpotlightView extends WatchUi.WatchFace {
     // How far from the center of the clock the number should be printed
     var text_position as Float = 0.8f;
     var text_visible as boolean = true;
-    const TEXT_FONT = Gfx.FONT_SMALL;
+    var text_font = Gfx.FONT_SMALL;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
     // that we're zooming in on.
@@ -51,6 +51,7 @@ class SpotlightView extends WatchUi.WatchFace {
             focal_point = Properties.getValue("focalPoint");
             text_position = Properties.getValue("textPosition");
             text_visible = Properties.getValue("textVisible");
+            text_font = Properties.getValue("font");
         }
 
         // get screen dimensions
@@ -158,7 +159,7 @@ class SpotlightView extends WatchUi.WatchFace {
                 if (text_visible && hash_marks_label[i] != "") {
                     var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * text_position;
                     var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * text_position;
-                    dc.drawText(text_x, text_y, TEXT_FONT, hash_marks_label[i],
+                    dc.drawText(text_x, text_y, text_font, hash_marks_label[i],
                                 Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
                 }
             }
