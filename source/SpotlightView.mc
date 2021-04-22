@@ -59,9 +59,8 @@ class SpotlightView extends WatchUi.WatchFace {
         clock_radius = screen_radius * ZOOM_FACTOR;
 
         // pre-calculate as much as we can using static parameters
-        for(var i = 0; i < 72; i += 1) {
-            var angle = ((i as Double) / 72.0f) * 2 * Math.PI;
-            hash_marks_angle[i] = angle;
+        for(var i = 0; i < NUM_HASH_MARKS; i += 1) {
+            var angle as Float = ((i as Float) / 72.0f) * 2 * Math.PI;
             var length as Float;
             if (i % 6 == 0) {
                 // Hour hashes are the longest
