@@ -180,16 +180,17 @@ class SpotlightView extends WatchUi.WatchFace {
         dc.setColor(HOUR_LINE_COLOR, BACKGROUND_COLOR);
         dc.setPenWidth(2);
         var x1, y1, x2, y2 as Number;
+        // 2 * radius so that we definitely overshoot, for square screens
         if (Math has :round) {
-            x1 = Math.round(screen_center_x + screen_radius * Math.sin(angle));
-            y1 = Math.round(screen_center_y - screen_radius * Math.cos(angle));
-            x2 = Math.round(screen_center_x - screen_radius * Math.sin(angle));
-            y2 = Math.round(screen_center_y + screen_radius * Math.cos(angle));
+            x1 = Math.round(screen_center_x + 2 * screen_radius * Math.sin(angle));
+            y1 = Math.round(screen_center_y - 2 * screen_radius * Math.cos(angle));
+            x2 = Math.round(screen_center_x - 2 * screen_radius * Math.sin(angle));
+            y2 = Math.round(screen_center_y + 2 * screen_radius * Math.cos(angle));
         } else {
-            x1 = screen_center_x + screen_radius * Math.sin(angle);
-            y1 = screen_center_y - screen_radius * Math.cos(angle);
-            x2 = screen_center_x - screen_radius * Math.sin(angle);
-            y2 = screen_center_y + screen_radius * Math.cos(angle);
+            x1 = screen_center_x + 2 * screen_radius * Math.sin(angle);
+            y1 = screen_center_y - 2 * screen_radius * Math.cos(angle);
+            x2 = screen_center_x - 2 * screen_radius * Math.sin(angle);
+            y2 = screen_center_y + 2 * screen_radius * Math.cos(angle);
         }
         dc.drawLine(x1, y1, x2, y2);
     }
