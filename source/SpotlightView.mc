@@ -2,6 +2,7 @@ using Toybox.WatchUi;
 using Toybox.Graphics as Gfx;
 using Toybox.Lang;
 using Toybox.System as Sys;
+using Toybox.Application.Properties;
 
 class SpotlightView extends WatchUi.WatchFace {
 
@@ -10,13 +11,14 @@ class SpotlightView extends WatchUi.WatchFace {
     const HOUR_LINE_COLOR = Gfx.COLOR_RED;
     // Starting with a clock exactly the size of the face, how many
     // times to zoom in.
-    const ZOOM_FACTOR as Double = 2.1f;
+    var zoom_factor as Float = 2.1f;
     // How far from the center of the clock the middle of the face should be
     // 0 means don't move, 1 means the edge of the clock will be in the middle
     // of the face
-    const FOCAL_POINT as Double = 0.8f;
+    var focal_point as Float = 0.8f;
     // How far from the center of the clock the number should be printed
-    const TEXT_POSITION as Double = 0.8f;
+    var text_position as Float = 0.8f;
+    var text_visible as boolean = true;
     const TEXT_FONT = Gfx.FONT_SMALL;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
@@ -44,6 +46,12 @@ class SpotlightView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc) {
+        if (Toybox.Application has :Properties) {
+            zoom_factor = Properties.getValue("zoomFactor");
+            focal_point = Properties.getValue("focalPoint");
+            text_position = Properties.getValue("textPosition");
+            text_visible = Properties.getValue("textVisible");
+        }
 
         // get screen dimensions
         screen_width = dc.getWidth();
@@ -56,7 +64,7 @@ class SpotlightView extends WatchUi.WatchFace {
         screen_center_x = screen_width / 2 - 1;
         screen_center_y = screen_height / 2 - 1;
 
-        clock_radius = screen_radius * ZOOM_FACTOR;
+        clock_radius = screen_radius * zoom_factor;
 
         // pre-calculate as much as we can using static parameters
         for(var i = 0; i < NUM_HASH_MARKS; i += 1) {
@@ -124,7 +132,7 @@ class SpotlightView extends WatchUi.WatchFace {
     function drawHashMarks(dc, angle) {
 
     	dc.setColor(HASH_MARK_COLOR, BACKGROUND_COLOR);
-        // FOCAL_POINT * clock_radius * Math.sin(angle) ==
+        // focal_point * clock_radius * Math.sin(angle) ==
         //    the offset from center of clock to the focal point.
         // Combine them with screen center to bring focal point
         // to the center of the screen.
@@ -133,8 +141,8 @@ class SpotlightView extends WatchUi.WatchFace {
         // This is much much faster than using Math.round(), which
         // isn't available on older platforms. We're only dealing
         // with positive X/Y values, so this works nicely.
-        var clock_center_x as Float = screen_center_x - FOCAL_POINT * clock_radius * Math.sin(angle) + 0.5f;
-        var clock_center_y as Float = screen_center_y + FOCAL_POINT * clock_radius * Math.cos(angle) + 0.5f;
+        var clock_center_x as Float = screen_center_x - focal_point * clock_radius * Math.sin(angle) + 0.5f;
+        var clock_center_y as Float = screen_center_y + focal_point * clock_radius * Math.cos(angle) + 0.5f;
         var index_guess = (72.0f * angle / (2 * Math.PI)).toNumber();
         var dist;
         for (var i = 0; i < NUM_HASH_MARKS; ++i) {
@@ -147,9 +155,9 @@ class SpotlightView extends WatchUi.WatchFace {
                 var xi = clock_center_x + clock_radius * hash_marks_clock_xi[i];
                 var yi = clock_center_y + clock_radius * hash_marks_clock_yi[i];
                 dc.drawLine(xo, yo, xi, yi);
-                if (hash_marks_label[i] != "") {
-                    var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * TEXT_POSITION;
-                    var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * TEXT_POSITION;
+                if (text_visible && hash_marks_label[i] != "") {
+                    var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * text_position;
+                    var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * text_position;
                     dc.drawText(text_x, text_y, TEXT_FONT, hash_marks_label[i],
                                 Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
                 }
