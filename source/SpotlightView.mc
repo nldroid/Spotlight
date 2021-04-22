@@ -2,13 +2,54 @@ using Toybox.WatchUi;
 using Toybox.Graphics as Gfx;
 using Toybox.Lang;
 using Toybox.System as Sys;
-
+ 
 class SpotlightView extends WatchUi.WatchFace {
 
     var background_color = Gfx.COLOR_BLACK;
-    var width_screen, height_screen;
+    var hash_color = Gfx.COLOR_WHITE;
+    var hand_color = Gfx.COLOR_RED;
+    // Starting with a clock exactly the size of the face, how many
+    // times to zoom in.
+    var zoom_factor as Lang.Double = 2.1d; 
+    // How far from the center of the clock the middle of the face should be
+    // 0 means don't move, 1 means the edge of the clock will be in the middle
+    // of the face
+    var focal_point as Lang.Double = 0.8d;
 
-    var hashMarksArray = new [72];
+    class HashMark {
+        var angle as Lang.Double; // Angle in rad
+        var length as Lang.Double; // Length of mark from edge of clock, in rad
+        var width as Lang.Number; // Width of mark in pixels
+        // Clock coordinates in -1.0 to +1.0 range
+        var clock_xo as Lang.Double; // Outside X coordinate of mark 
+        var clock_yo as Lang.Double; // Outside Y coordinate of mark
+        var clock_xi as Lang.Double; // Inside X     "
+        var clock_yi as Lang.Double; // Inside Y     "
+        function initialize(in_angle as Lang.Double, in_length as Lang.Double, in_width as Lang.Number) {
+            angle = in_angle;
+            clock_xo = Math.sin(in_angle);
+            clock_yo = Math.cos(in_angle);
+            clock_xi = clock_xo * (1d - in_length);
+            clock_yi = clock_yo * (1d - in_length);
+            length = in_length;
+            width = in_width;
+        }
+        function sin() as Lang.Double {
+            return Math.sin(angle);
+        }
+        function cos() as Lang.Double {
+            return Math.cos(angle);
+        }
+    }
+
+    // Screen refers to the actual display, Clock refers to the virtual clock
+    // that we're zooming in on. 
+    var screen_width, screen_height;
+    var screen_radius;
+    var screen_center_x, screen_center_y;
+    var clock_radius;
+
+    var hash_marks = new [72];
 
     function initialize() {
         WatchFace.initialize();
@@ -17,34 +58,39 @@ class SpotlightView extends WatchUi.WatchFace {
     // Load your resources here
     function onLayout(dc) {
     
-        //get screen dimensions
-        width_screen = dc.getWidth();
-        height_screen = dc.getHeight();
-         
+        // get screen dimensions
+        screen_width = dc.getWidth();
+        screen_height = dc.getHeight();
+        // if the screen isn't round/square, we'll use a diameter
+        // that's the average of the two. And of course radius is
+        // half that.
+        screen_radius = (screen_width + screen_height) / 4.0d;
+        // -1 seems to line up better in the simulator
+        screen_center_x = screen_width / 2 - 1;
+        screen_center_y = screen_height / 2 - 1;
 
-        //get hash marks position. 12 hours, 6 ticks per hour.
-        /*
-        for(var i = 0; i < 72; i+=1)
-        {
-            hashMarksArray[i] = new [2];
-            //if(i != 0 && i != 15 && i != 30 && i != 45)
-            //{
-                //hashMarksArray[i][0] = (i / 72.0) * Math.PI * 2;
-                hashMarksArray[i][0] = (i / 120.0) * Math.PI*2;
-                //if(i % 5 == 0)
-                //{
-                    //hashMarksArray[i][1] = -200;
-                    hashMarksArray[i][1] = -200;
-                    //drawHand(dc, hashMarksArray[i][0], 110, 2, hashMarksArray[i][1], false);
-                //}
-                //else
-                //{
-                //    hashMarksArray[i][1] = -200;
-                    //drawHand(dc, hashMarksArray[i][0], 110, 2, hashMarksArray[i][1], false);
-                //}
-            //}
+        clock_radius = screen_radius * zoom_factor;
+
+        // get hash marks position. 12 hours, 6 hashes per hour.
+        for(var i = 0; i < 72; i += 1) {
+            var angle as Lang.Double = ((i as Lang.Double) / 72.0d) * 2 * Math.PI;
+            var length as Lang.Double;
+            var width as Lang.Number;
+            if (i % 6 == 0) {
+                // Hour hashes are the longest
+                length = 0.10d;
+                width = 3;
+            } else if (i % 3 == 0) {
+                // Half hour ticks
+                length = 0.05d;
+                width = 2;
+            } else {
+                // 10 minute ticks
+                length = 0.025d;
+                width = 1;
+            }
+            hash_marks[i] = new HashMark(angle, length, width);
         }    
-    */
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -57,251 +103,61 @@ class SpotlightView extends WatchUi.WatchFace {
     // Update the view
     function onUpdate(dc) {
     	var clockTime = Sys.getClockTime();
-    	
+        // calculate angle for hour hand for the current time
+        var time_seconds = ((((clockTime.hour % 12) * 60) + clockTime.min) * 60) + clockTime.sec;
+        var time_angle = Math.PI * 2 * time_seconds / (12 * 60 * 60);
+    
+    	// setAntiAlias has only been around since 3.2.0
+    	// this way we support older models
+	    if(dc has :setAntiAlias) {
+	        dc.setAntiAlias(true);
+	    }
         // Clear the screen
-        dc.setColor(background_color, Gfx.COLOR_WHITE);
-        dc.fillRectangle(0,0, width_screen, height_screen);
+        dc.setColor(background_color, background_color);
+        dc.clear();
 
-        // Draw the hash marks
-        //dc.setColor(Gfx.COLOR_DK_GRAY, Gfx.COLOR_TRANSPARENT);
-        drawHashMarks(dc, 6, 0);
+        drawHashMarks(dc, time_angle);
         
-        drawSingleHand(dc, 6, 0); //, clockTime.hour, clockTime.min);
-        
-        //View.onUpdate(dc);
+        drawHourLine(dc, time_angle);
     }
-    
-    function drawHashMarks(dc, clock_hour, clock_min) {
-        var center = [250,250];
-        var radius = 300;
-        
-//        var centerX = 0;
-//        var centerY = 0;
-    
-    	var vLong = radius - 20;
-    	var vMiddle = radius - 10;
-    	var vShort = radius - 5;
-    	
-    	var aDel = Math.PI / 60.0;
-    	
-        var hour;
-        hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min );
-        hour = hour / (12 * 60.0);
-        hour = hour * Math.PI * 2;
 
-    	var vAngle = hour;
+    function roundedDrawLine(dc, x1, y1, x2, y2) {
+        dc.drawLine(Math.round(x1),
+                    Math.round(y1),
+                    Math.round(x2),
+                    Math.round(y2));
+    }
+
+    function drawHashMarks(dc, angle) {
         
-        var myCenter = getCenter(hour, 200, 2, 200);
-    	
-        var centerX = myCenter[0];
-        var centerY = myCenter[1];
-        
-        dc.drawText(width_screen/2, height_screen/6, Gfx.FONT_SMALL, centerX.format("%.0f") + "x" + centerY.format("%.0f") + ":" + vAngle, Gfx.TEXT_JUSTIFY_CENTER);
-    	
-    	dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT);
-    	for (var i = 0; i < 60; ++i) {
-	    	vAngle = aDel * i;
-    		var vSin = Math.sin(vAngle);
-    		var vCos = Math.cos(vAngle);
-    		if (i % 12 == 0) { // 30 mins
-				dc.setPenWidth(2);
-				// x-buiten, y-buiten, x-binnen, y-binnen
-				dc.drawLine(centerX + radius * vSin, centerY + radius * vCos,
-					centerX + vMiddle * vSin, centerY + vMiddle * vCos);
-    		}
-    		else if (i % 6 == 0) { // Whole hours
-				dc.setPenWidth(3);
-				// x-buiten, y-buiten, x-binen, y-binnen
-				dc.drawLine(centerX + radius * vSin, centerY + radius * vCos,
-					centerX + vLong * vSin, centerY + vLong * vCos);
-    		}
-    		else if (i %2 == 0) {
-				dc.setPenWidth(1);
-				dc.drawLine(centerX + radius * vSin, centerY + radius * vCos,
-					centerX + vShort * vSin, centerY + vShort * vCos);
-    		}
+    	dc.setColor(hash_color, background_color);
+        // focal_point * clock_radius * Math.sin(angle) ==
+        //    the offset from center of clock to the focal point.
+        // Combine them with screen center to bring focal point 
+        // to the center of the screen.
+        var clock_center_x = screen_center_x - focal_point * clock_radius * Math.sin(angle);
+        var clock_center_y = screen_center_y + focal_point * clock_radius * Math.cos(angle);
+    	for (var i = 0; i < hash_marks.size(); ++i) {
+            var mark = hash_marks[i];
+            dc.setPenWidth(mark.width);
+            // outside X, outside Y, inside X, inside Y
+            roundedDrawLine(dc,
+                            clock_center_x + clock_radius * mark.clock_xo,
+                            clock_center_y + clock_radius * mark.clock_yo,
+                            clock_center_x + clock_radius * mark.clock_xi,
+                            clock_center_y + clock_radius * mark.clock_yi);
     	}
     }
-    /*
-	//! Draw the hash mark symbols on the watch
-    //! @param dc Device context
-    function drawHashMarks(dc, clock_hour, clock_min)
-    {
-    	var totalmins;
-    	var pct;
-    	var mult = 2;
-    	var overheadline = -200;
-    	var minutesPerDial = 150.0;
-    	var angle;
-    	
-    	totalmins = (( clock_hour % 12 ) * 60 ) + clock_min;
-    	mult=2;
-    	overheadline=-200;
-    	
-        dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT);
-		
-        //for(var i = 0; i < 60; i += 1)
-        for(var i = totalmins-70; i < totalmins+70; i += 1)
-        {
-            if(i % 12 == 0) // 30 mins
-            {
-            	pct = i / minutesPerDial;
-	        	angle = pct * Math.PI * mult;
-                drawMark(dc, angle, 180, 2, overheadline, clock_hour, clock_min);
-            }
-            else if(i % 6 == 0) // Whole hours
-            {
-            	pct = i / minutesPerDial;
-	        	angle = pct * Math.PI * mult;
-                drawMark(dc, angle, 140, 2, overheadline, clock_hour, clock_min);
-            }
-            else if (i %2 == 0) 
-            {	// 10 mins
-            	pct = i / minutesPerDial;
-	        	angle = pct * Math.PI * mult;
-                drawMark(dc, angle, 190, 2, overheadline, clock_hour, clock_min);
-            }
-        }
-    } */
-    
-    function drawMark(dc, angle, length, width, overheadLine, clock_hour, clock_min)
-    {
-    
-        var hour;
-        var distanceFromCenter = 200; 
-	    var zoomfactor = 1.5;
 
-        // Convert hours to minutes, add the minutes and
-        // compute the angle.
-        hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min );
-        
-        //hour = 9*60;
-        if (hour < 540) {
-        	hour = hour + 180;
-        }
-        else 
-        {
-        	hour = 540 - hour;
-        }	
-        hour = hour / (12 * 60.0);
-        hour = hour * Math.PI * 2; 
-    
-        // Map out the coordinates of the watch hand
-        
-        var coords = [ 
-            [-(width/2), 0 + overheadLine],
-            [-(width/2), -length],
-            [width/2, -length],
-            [width/2, 0 + overheadLine]
-        ];
-        
-        var result = new [4];
-        //var centerX = width_screen / 2;
-        //var centerY = height_screen / 2;
-        var cos = Math.cos(angle);
-        var sin = Math.sin(angle);
-        
-		var hourCos = Math.cos(hour);
-		var hourSin = Math.sin(hour);
-		
-        var centerX = (width_screen / 2) + distanceFromCenter * hourCos;
-        var centerY = (height_screen / 2) + distanceFromCenter * hourSin;
-        
-        //centerX = 0;
-        //centerY = 0;
-        
-        //dc.drawText((width_screen/2), 100, Gfx.FONT_MEDIUM, hour.format("%.1f") + ":" + centerX.format("%.0f") + "x" + centerY.format("%.0f"),Gfx.TEXT_JUSTIFY_CENTER);
-        
-        // 0,0 is linksboven
-   		//centerX = 0;
-        //centerY = 0;
-        		
-
-        // Transform the coordinates
-        for (var i = 0; i < 4; i += 1)
-        {
-            var x = (coords[i][0] * cos) - (coords[i][1] * sin);
-            var y = (coords[i][0] * sin) + (coords[i][1] * cos);
-            
-            result[i] = [centerX + x, centerY + y];
-            //result[i] = [ diffX + x, diffY + y];
-        }
-
-        // Draw the polygon
-        dc.fillPolygon(result);
+    function drawHourLine(dc, angle) {
+        dc.setColor(hand_color, background_color);
+        dc.setPenWidth(2);
+        var x1 = screen_center_x + screen_radius * Math.sin(angle);
+        var y1 = screen_center_y - screen_radius * Math.cos(angle);
+        var x2 = screen_center_x - screen_radius * Math.sin(angle);
+        var y2 = screen_center_y + screen_radius * Math.cos(angle);        
+        roundedDrawLine(dc, x1, y1, x2, y2);
     }
-    
-    function getCenter(angle, length, width, overheadLine)
-    {
-        var coords = [ 
-            [-(width/2), 0 + overheadLine],
-            [-(width/2), -length],
-            [width/2, -length],
-            [width/2, 0 + overheadLine]
-        ];
-        var result = new [2];
-        var centerX = width_screen / 2;
-        var centerY = height_screen / 2;
-        var cos = Math.cos(angle);
-        var sin = Math.sin(angle);
-
-        // Transform the coordinates
-        for (var i = 0; i < 1; i += 1)
-        {
-            var x = (coords[i][0] * cos) - (coords[i][1] * sin);
-            var y = (coords[i][0] * sin) + (coords[i][1] * cos);
-            result = [ centerX + x, centerY + y];
-        }
-        return result;
-    }        
-    
-    function drawHand(dc, angle, length, width, overheadLine, drawCircleOnTop)
-    {
-        // Map out the coordinates of the watch hand
-        var coords = [ 
-            [-(width/2), 0 + overheadLine],
-            [-(width/2), -length],
-            [width/2, -length],
-            [width/2, 0 + overheadLine]
-        ];
-        var result = new [4];
-        var centerX = width_screen / 2;
-        var centerY = height_screen / 2;
-        var cos = Math.cos(angle);
-        var sin = Math.sin(angle);
-
-        // Transform the coordinates
-        for (var i = 0; i < 4; i += 1)
-        {
-            var x = (coords[i][0] * cos) - (coords[i][1] * sin);
-            var y = (coords[i][0] * sin) + (coords[i][1] * cos);
-            result[i] = [ centerX + x, centerY + y];
-        }
-
-        // Draw the polygon
-        dc.fillPolygon(result);
-    }    
-
-
-	function drawSingleHand(dc, clock_hour, clock_min)
-    {
-        var hour, min, sec;
-
-        // Draw the hour. Convert it to minutes and
-        // compute the angle.
-        hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min );
-        hour = hour / (12 * 60.0);
-        hour = hour * Math.PI * 2;
-        dc.setColor(Gfx.COLOR_DK_RED, Gfx.COLOR_TRANSPARENT);
-        
-        
-        // dc, angle, length, width, overheadLine, drawCircleOnTop
-        drawHand(dc, hour, height_screen, 4, height_screen, false);
-
-    }
-
-
-
 
     // Called when this View is removed from the screen. Save the
     // state of this View here. This includes freeing resources from
