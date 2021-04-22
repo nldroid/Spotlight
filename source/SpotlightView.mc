@@ -10,22 +10,26 @@ class SpotlightView extends WatchUi.WatchFace {
     var hand_color = Gfx.COLOR_RED;
     // Starting with a clock exactly the size of the face, how many
     // times to zoom in.
-    var zoom_factor as Lang.Double = 2.1d; 
+    var zoom_factor as Double = 2.1d; 
     // How far from the center of the clock the middle of the face should be
     // 0 means don't move, 1 means the edge of the clock will be in the middle
     // of the face
-    var focal_point as Lang.Double = 0.8d;
+    var focal_point as Double = 0.8d;
+    // How far from the center of the clock the number should be printed
+    var text_position as Double = 0.8d;
+    var text_font = Gfx.FONT_SMALL;
 
     class HashMark {
-        var angle as Lang.Double; // Angle in rad
-        var length as Lang.Double; // Length of mark from edge of clock, in rad
-        var width as Lang.Number; // Width of mark in pixels
+        var angle as Double; // Angle in rad
+        var length as Double; // Length of mark from edge of clock, in rad
+        var width as Number; // Width of mark in pixels
         // Clock coordinates in -1.0 to +1.0 range
-        var clock_xo as Lang.Double; // Outside X coordinate of mark 
-        var clock_yo as Lang.Double; // Outside Y coordinate of mark
-        var clock_xi as Lang.Double; // Inside X     "
-        var clock_yi as Lang.Double; // Inside Y     "
-        function initialize(in_angle as Lang.Double, in_length as Lang.Double, in_width as Lang.Number) {
+        var clock_xo as Double; // Outside X coordinate of mark 
+        var clock_yo as Double; // Outside Y coordinate of mark
+        var clock_xi as Double; // Inside X     "
+        var clock_yi as Double; // Inside Y     "
+        var label as String or Null;
+        function initialize(in_angle as Double, in_length as Double, in_width as Number) {
             angle = in_angle;
             clock_xo = Math.sin(in_angle);
             clock_yo = Math.cos(in_angle);
@@ -34,10 +38,10 @@ class SpotlightView extends WatchUi.WatchFace {
             length = in_length;
             width = in_width;
         }
-        function sin() as Lang.Double {
+        function sin() as Double {
             return Math.sin(angle);
         }
-        function cos() as Lang.Double {
+        function cos() as Double {
             return Math.cos(angle);
         }
     }
@@ -73,9 +77,9 @@ class SpotlightView extends WatchUi.WatchFace {
 
         // get hash marks position. 12 hours, 6 hashes per hour.
         for(var i = 0; i < 72; i += 1) {
-            var angle as Lang.Double = ((i as Lang.Double) / 72.0d) * 2 * Math.PI;
-            var length as Lang.Double;
-            var width as Lang.Number;
+            var angle as Double = ((i as Double) / 72.0d) * 2 * Math.PI;
+            var length as Double;
+            var width as Number;
             if (i % 6 == 0) {
                 // Hour hashes are the longest
                 length = 0.10d;
@@ -89,7 +93,15 @@ class SpotlightView extends WatchUi.WatchFace {
                 length = 0.025d;
                 width = 1;
             }
-            hash_marks[i] = new HashMark(angle, length, width);
+            var mark = new HashMark(angle, length, width);
+            if (i % 6 == 0) {
+                var hour as Number = i / 6;
+                if (hour == 0) {
+                    hour = 12;
+                }
+                mark.label = hour.format("%d");
+            }
+            hash_marks[i] = mark;
         }    
         setLayout(Rez.Layouts.WatchFace(dc));
     }
@@ -143,9 +155,15 @@ class SpotlightView extends WatchUi.WatchFace {
             // outside X, outside Y, inside X, inside Y
             roundedDrawLine(dc,
                             clock_center_x + clock_radius * mark.clock_xo,
-                            clock_center_y + clock_radius * mark.clock_yo,
+                            clock_center_y - clock_radius * mark.clock_yo,
                             clock_center_x + clock_radius * mark.clock_xi,
-                            clock_center_y + clock_radius * mark.clock_yi);
+                            clock_center_y - clock_radius * mark.clock_yi);
+            if (mark.label != null) {
+                var text_x = clock_center_x + clock_radius * mark.clock_xo * text_position;
+                var text_y = clock_center_y - clock_radius * mark.clock_yo * text_position;
+                dc.drawText(text_x, text_y, text_font, mark.label,
+                            Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
+            }
     	}
     }
 
