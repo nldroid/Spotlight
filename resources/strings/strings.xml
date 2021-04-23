@@ -4,9 +4,9 @@
     <string id="zoomFactorPrompt">How much bigger the virtual clock should be</string>
     <string id="focalPointTitle">Focal point</string>
     <string id="focalPointPrompt">Where the center of the spotlight should be. 0 is the center of the clock, 1 is the edge of the clock</string>
-    <string id="textPositionTitle">Number position</string>
-    <string id="textPositionPrompt">Where the numbers should be positioned. 0 is the center of the clock, 1 is the edge of the clock</string>
-    <string id="textVisibleTitle">Number visibility</string>
+    <string id="textPositionTitle">Numeral position</string>
+    <string id="textPositionPrompt">Where numerals should be positioned. 0 is the center of the clock, 1 is the edge of the clock</string>
+    <string id="textVisibleTitle">Numeral visibility</string>
     <string id="textVisiblePrompt">Whether or not to show the numbers for the hours</string>
     <string id="fontTitle">Font</string>
     <string id="fontPrompt">Font used for numbers. Some might break things on older watches.</string>
@@ -30,4 +30,8 @@
     <string id="font17">Huge size number only system font</string>
     <string id="font18">Glance text font</string>
     <string id="font19">Glance number only font </string>
+    <string id="numeralsTitle">Numeral type</string>
+    <string id="numeralsPrompt">Whether to use roman or arabic numerals. Roman will not work with number only fonts.</string>
+    <string id="numeralsArabic">Arabic</string>
+    <string id="numeralsRoman">Roman</string>
 </strings>

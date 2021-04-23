@@ -20,8 +20,9 @@ class SpotlightView extends WatchUi.WatchFace {
     var focal_point as Float = 0.8f;
     // How far from the center of the clock the number should be printed
     var text_position as Float = 0.8f;
-    var text_visible as boolean = true;
+    var text_visible as Boolean = true;
     var text_font = Gfx.FONT_SMALL;
+    var roman_numerals as Boolean = false;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
     // that we're zooming in on.
@@ -58,6 +59,14 @@ class SpotlightView extends WatchUi.WatchFace {
             text_position = Properties.getValue("textPosition");
             text_visible = Properties.getValue("textVisible");
             text_font = Properties.getValue("font");
+            switch (Properties.getValue("numerals")) {
+                case 0:
+                    roman_numerals = false;
+                    break;
+                case 1:
+                    roman_numerals = true;
+                    break;
+            }
         }
 
         // get screen dimensions
@@ -85,7 +94,48 @@ class SpotlightView extends WatchUi.WatchFace {
                 if (hour == 0) {
                     hour = 12;
                 }
-                hash_marks_label[i] = hour.format("%d");
+                if (roman_numerals) {
+                    switch (hour) {
+                        case 1:
+                            hash_marks_label[i] = "I";
+                            break;
+                        case 2:
+                            hash_marks_label[i] = "II";
+                            break;
+                        case 3:
+                            hash_marks_label[i] = "III";
+                            break;
+                        case 4:
+                            hash_marks_label[i] = "IV";
+                            break;
+                        case 5:
+                            hash_marks_label[i] = "V";
+                            break;
+                        case 6:
+                            hash_marks_label[i] = "VI";
+                            break;
+                        case 7:
+                            hash_marks_label[i] = "VII";
+                            break;
+                        case 8:
+                            hash_marks_label[i] = "VIII";
+                            break;
+                        case 9:
+                            hash_marks_label[i] = "IX";
+                            break;
+                        case 10:
+                            hash_marks_label[i] = "X";
+                            break;
+                        case 11:
+                            hash_marks_label[i] = "XI";
+                            break;
+                        case 12:
+                            hash_marks_label[i] = "XII";
+                            break;
+                    }
+                } else {
+                    hash_marks_label[i] = hour.format("%d");
+                }
             } else {
                 if (i % 3 == 0) {
                     // Half hour ticks

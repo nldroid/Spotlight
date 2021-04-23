@@ -10,4 +10,8 @@
     <string id="textVisiblePrompt">Of de uur cijfers zichtbaar zijn</string>
     <string id="fontTitle">Lettertype</string>
     <string id="fontPrompt">Lettertype voor de cijfers. Sommige instellingen kunnen dingen breken op oudere horloges.</string>
+    <string id="numeralsTitle">Cijfer type</string>
+    <string id="numeralsPrompt">Romeinse of arabische cijfers. Romeinse cijfers zullen niet werken met de number only lettertypes.</string>
+    <string id="numeralsArabic">Arabisch</string>
+    <string id="numeralsRoman">Romeins</string>
 </strings>

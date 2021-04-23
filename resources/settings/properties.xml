@@ -5,6 +5,7 @@
     	<property id="textPosition" type="float">0.8</property>
         <property id="textVisible" type="boolean">true</property>
         <property id="font" type="number">2</property>
+        <property id="numerals" type="number">0</property>
     </properties>
 
     <settings>
@@ -42,6 +43,12 @@
                 <listEntry value="17">@Strings.font17</listEntry>
                 <listEntry value="18">@Strings.font18</listEntry>
                 <listEntry value="19">@Strings.font19</listEntry>
+            </settingConfig>
+		</setting>
+        <setting propertyKey="@Properties.numerals" title="@Strings.numeralsTitle" prompt="@Strings.numeralsPrompt">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.numeralsArabic</listEntry>
+                <listEntry value="1">@Strings.numeralsRoman</listEntry>
             </settingConfig>
 		</setting>
     </settings>
