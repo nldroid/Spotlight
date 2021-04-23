@@ -32,6 +32,7 @@
             <iq:product id="fr235"/>
             <iq:product id="fr245"/>
             <iq:product id="fr245m"/>
+            <iq:product id="fr45"/>
             <iq:product id="fr630"/>
             <iq:product id="fr645"/>
             <iq:product id="fr645m"/>
@@ -40,6 +41,7 @@
             <iq:product id="fr920xt"/>
             <iq:product id="fr935"/>
             <iq:product id="fr945"/>
+            <iq:product id="garminswim2"/>
             <iq:product id="legacyherocaptainmarvel"/>
             <iq:product id="legacyherofirstavenger"/>
             <iq:product id="legacysagadarthvader"/>
@@ -54,6 +56,8 @@
             <iq:product id="marqgolfer"/>
             <iq:product id="smallwearable2021"/>
             <iq:product id="venu"/>
+            <iq:product id="venu2"/>
+            <iq:product id="venu2s"/>
             <iq:product id="venud"/>
             <iq:product id="venusq"/>
             <iq:product id="venusqm"/>
@@ -65,6 +69,7 @@
             <iq:product id="vivoactive4"/>
             <iq:product id="vivoactive4s"/>
             <iq:product id="vivoactive_hr"/>
+            <iq:product id="vivolife"/>
             <iq:product id="wearable2021"/>
         </iq:products>
         <iq:permissions/>
