@@ -1,0 +1,13 @@
+<strings>
+    <string id="AppName">Spotlight</string>
+    <string id="zoomFactorTitle">Zoom factor</string>
+    <string id="zoomFactorPrompt">Hoeveel groter de virtuele klok moet zijn</string>
+    <string id="focalPointTitle">Focus punt</string>
+    <string id="focalPointPrompt">Waar het midden van de spotlight gericht moet zijn. 0 is het midden van de klok, 1 is de rand van de klok.</string>
+    <string id="textPositionTitle">Cijfer positie</string>
+    <string id="textPositionPrompt">Waar de cijfers staan. 0 is het midden van de klok, 1 is de rand van de klok.</string>
+    <string id="textVisibleTitle">Cijfer zichtbaarheid</string>
+    <string id="textVisiblePrompt">Of de uur cijfers zichtbaar zijn</string>
+    <string id="fontTitle">Lettertype</string>
+    <string id="fontPrompt">Lettertype voor de cijfers. Sommige instellingen kunnen dingen breken op oudere horloges.</string>
+</strings>
