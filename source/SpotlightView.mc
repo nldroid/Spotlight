@@ -6,11 +6,11 @@ using Toybox.Application.Properties;
 
 class SpotlightView extends WatchUi.WatchFace {
 
-    const BACKGROUND_COLOR = Gfx.COLOR_BLACK;
-    const HASH_MARK_COLOR = Gfx.COLOR_WHITE;
-    const HOUR_LINE_COLOR = Gfx.COLOR_RED;
-    const HASH_MARK_LOW_POWER_COLOR = Gfx.COLOR_DK_GRAY;
-    const HOUR_LINE_LOW_POWER_COLOR = Gfx.COLOR_DK_RED;
+    var background_color as Number = Gfx.COLOR_BLACK;
+    var hash_mark_color = Gfx.COLOR_WHITE;
+    var hour_line_color = Gfx.COLOR_RED;
+    var hash_mark_low_power_color = Gfx.COLOR_DK_GRAY;
+    var hour_line_low_power_color = Gfx.COLOR_DK_RED;
     // Starting with a clock exactly the size of the face, how many
     // times to zoom in.
     var zoom_factor as Float = 2.1f;
@@ -22,7 +22,17 @@ class SpotlightView extends WatchUi.WatchFace {
     var text_position as Float = 0.8f;
     var text_visible as Boolean = true;
     var text_font = Gfx.FONT_SMALL;
+    var text_color as Number = Gfx.COLOR_BLACK;
     var roman_numerals as Boolean = false;
+    // Hash mark sizes:
+    // l = hour, m = 30 min, s = 10 min
+    // l = length, w = width
+    var mark_ll as Float = 0.1f;
+    var mark_lw as Number = 3;
+    var mark_ml as Float = 0.05f;
+    var mark_mw as Number = 2;
+    var mark_sl as Float = 0.025f;
+    var mark_sw as Number = 1;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
     // that we're zooming in on.
@@ -32,33 +42,51 @@ class SpotlightView extends WatchUi.WatchFace {
     var clock_radius;
 
     // Whether or not we're in low-power mode
-    var low_power as Boolean;
+    var low_power as Boolean = false;
+    // Whether or not we're hidden. No need to draw if we are.
+    var face_hidden as Boolean = false;
 
     // Instead of an Array of Objects, separate Arrays, because older watches
     // can't handle lots of Objects
     const NUM_HASH_MARKS = 72;
-	var hash_marks_angle as Array<Float> = new Float[NUM_HASH_MARKS]; // Angle in rad
-	var hash_marks_width as Array<Number> = new Float[NUM_HASH_MARKS]; // Width of mark in pixels
-	var hash_marks_clock_xo as Array<Float> = new Float[NUM_HASH_MARKS]; // Outside X coordinate of mark
+    var hash_marks_angle as Array<Float> = new Float[NUM_HASH_MARKS]; // Angle in rad
+    var hash_marks_width as Array<Number> = new Float[NUM_HASH_MARKS]; // Width of mark in pixels
+    var hash_marks_clock_xo as Array<Float> = new Float[NUM_HASH_MARKS]; // Outside X coordinate of mark
     // Clock coordinates in -1.0 to +1.0 range
-	var hash_marks_clock_yo as Array<Float> = new Float[NUM_HASH_MARKS]; // Outside Y coordinate of mark
-	var hash_marks_clock_xi as Array<Float> = new Float[NUM_HASH_MARKS]; // Inside X     "
-	var hash_marks_clock_yi as Array<Float> = new Float[NUM_HASH_MARKS]; // Inside Y     "
-	var hash_marks_label as Array<String> = new [NUM_HASH_MARKS]; // Hour label
+    var hash_marks_clock_yo as Array<Float> = new Float[NUM_HASH_MARKS]; // Outside Y coordinate of mark
+    var hash_marks_clock_xi as Array<Float> = new Float[NUM_HASH_MARKS]; // Inside X     "
+    var hash_marks_clock_yi as Array<Float> = new Float[NUM_HASH_MARKS]; // Inside Y     "
+    var hash_marks_label as Array<String> = new [NUM_HASH_MARKS]; // Hour label
 
     function initialize() {
         WatchFace.initialize();
-        low_power = false;
     }
 
-    // Load your resources here
-    function onLayout(dc) {
+    // Since toNumberWithBase() doesn't seem to throw any exception
+    // on format errors, and even with `as Number` a `null` can happily
+    // be assigned, use a convenience function for reading colors from
+    // settings.
+    function getColor(key, default_color as Number) as Number {
+        var color as Number or Null = Properties.getValue(key).toNumberWithBase(16);
+        if (color != null) {
+            return color;
+        }
+        return default_color;
+    }
+
+    // Here we check all the settings (if possible) and do all the
+    // pre-calculations we can.
+    // According to https://take4-blue.com/en/program/garmin/creating-a-garmin-watch-face-performance-2/
+    // this should actually be slower, but it seems faster. Possibly Garmin
+    // fixed the SDK some.
+    function setupData() {
         if (Toybox.Application has :Properties) {
             zoom_factor = Properties.getValue("zoomFactor");
             focal_point = Properties.getValue("focalPoint");
             text_position = Properties.getValue("textPosition");
             text_visible = Properties.getValue("textVisible");
             text_font = Properties.getValue("font");
+            text_color = getColor("fontColor", text_color);
             switch (Properties.getValue("numerals")) {
                 case 0:
                     roman_numerals = false;
@@ -67,18 +95,18 @@ class SpotlightView extends WatchUi.WatchFace {
                     roman_numerals = true;
                     break;
             }
+            background_color = getColor("backgroundColor", background_color);
+            hash_mark_color = getColor("hashMarkColor", hash_mark_color);
+            hour_line_color = getColor("hourLineColor", hour_line_color);
+            hash_mark_low_power_color = getColor("hashMarkLowPowerColor", hash_mark_low_power_color);
+            hour_line_low_power_color = getColor("hourLineLowPowerColor", hour_line_low_power_color);
+            mark_ll = Properties.getValue("markLargeLength");
+            mark_lw = Properties.getValue("markLargeWidth");
+            mark_ml = Properties.getValue("markMediumLength");
+            mark_mw = Properties.getValue("markMediumWidth");
+            mark_sl = Properties.getValue("markSmallLength");
+            mark_sw = Properties.getValue("markSmallWidth");
         }
-
-        // get screen dimensions
-        screen_width = dc.getWidth();
-        screen_height = dc.getHeight();
-        // if the screen isn't round/square, we'll use a diameter
-        // that's the average of the two. And of course radius is
-        // half that.
-        screen_radius = (screen_width + screen_height) / 4.0f;
-        // -1 seems to line up better in the simulator
-        screen_center_x = screen_width / 2 - 1;
-        screen_center_y = screen_height / 2 - 1;
 
         clock_radius = screen_radius * zoom_factor;
 
@@ -88,8 +116,8 @@ class SpotlightView extends WatchUi.WatchFace {
             var length as Float;
             if (i % 6 == 0) {
                 // Hour hashes are the longest
-                length = 0.10f;
-                hash_marks_width[i] = 3;
+                length = mark_ll;
+                hash_marks_width[i] = mark_lw;
                 var hour as Number = i / 6;
                 if (hour == 0) {
                     hour = 12;
@@ -139,12 +167,12 @@ class SpotlightView extends WatchUi.WatchFace {
             } else {
                 if (i % 3 == 0) {
                     // Half hour ticks
-                    length = 0.05f;
-                    hash_marks_width[i] = 2;
+                    length = mark_ml;
+                    hash_marks_width[i] = mark_mw;
                 } else {
                     // 10 minute ticks
-                    length = 0.025f;
-                    hash_marks_width[i] = 1;
+                    length = mark_sl;
+                    hash_marks_width[i] = mark_sw;
                 }
                 hash_marks_label[i] = "";
             }
@@ -155,26 +183,62 @@ class SpotlightView extends WatchUi.WatchFace {
         }
     }
 
+    // Load your resources here
+    function onLayout(dc) {
+        // get screen dimensions
+        screen_width = dc.getWidth();
+        screen_height = dc.getHeight();
+        // if the screen isn't round/square, we'll use a diameter
+        // that's the average of the two. And of course radius is
+        // half that.
+        screen_radius = (screen_width + screen_height) / 4.0f;
+        // -1 seems to line up better in the simulator
+        screen_center_x = screen_width / 2 - 1;
+        screen_center_y = screen_height / 2 - 1;
+        setupData();
+    }
+
     // Called when this View is brought to the foreground. Restore
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
+        face_hidden = false;
+        // Only if this device has the Properties API do we want to
+        // redo the data to reflect changes in settings.
+        if (Toybox.Application has :Properties) {
+            setupData();
+        }
+    }
+
+    // Called when this View is removed from the screen. Save the
+    // state of this View here. This includes freeing resources from
+    // memory.
+    function onHide() {
+        face_hidden = true;
     }
 
     // Update the view
     function onUpdate(dc) {
-    	var clockTime = Sys.getClockTime();
+        if (face_hidden) {
+            return;
+        }
+        var clockTime = Sys.getClockTime();
         // calculate angle for hour hand for the current time
         var time_seconds = ((((clockTime.hour % 12) * 60) + clockTime.min) * 60) + clockTime.sec;
         var time_angle = Math.PI * 2 * time_seconds / (12 * 60 * 60);
 
-    	// setAntiAlias has only been around since 3.2.0
-    	// this way we support older models
-	    if(dc has :setAntiAlias) {
-	        dc.setAntiAlias(true);
-	    }
-        // Clear the screen
-        dc.setColor(BACKGROUND_COLOR, BACKGROUND_COLOR);
+        // setAntiAlias has only been around since 3.2.0
+        // this way we support older models
+        if(dc has :setAntiAlias) {
+            dc.setAntiAlias(true);
+        }
+        // Clear the screen with background color. To keep people from
+        // being stupid, always use black in lower power mode.
+        if (low_power) {
+            dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_BLACK);
+        } else {
+            dc.setColor(background_color, background_color);
+        }
         dc.clear();
 
         drawHashMarks(dc, time_angle);
@@ -182,16 +246,14 @@ class SpotlightView extends WatchUi.WatchFace {
         drawHourLine(dc, time_angle);
     }
 
-    function onPartialUpdate( dc ) {
-    	onUpdate(dc);
+    // Only for performance measuring. Don't need this during normal
+    // operation, since while we use seconds to calculate the angle,
+    // we don't need to do that in low power mode.
+    function onPartialUpdate(dc) {
+        //onUpdate(dc);
     }
 
     function drawHashMarks(dc, angle) {
-        if (low_power) {
-            dc.setColor(HASH_MARK_LOW_POWER_COLOR, BACKGROUND_COLOR);
-        } else {
-            dc.setColor(HASH_MARK_COLOR, BACKGROUND_COLOR);
-        }
         // focal_point * clock_radius * Math.sin(angle) ==
         //    the offset from center of clock to the focal point.
         // Combine them with screen center to bring focal point
@@ -209,15 +271,24 @@ class SpotlightView extends WatchUi.WatchFace {
             dist = (i - index_guess).abs();
             if (dist <= 9 || dist >= 63) {
                 dc.setPenWidth(hash_marks_width[i]);
+                // Transparent background so people can get their numbers nice and close
+                // or overlaying lines.
+                if (low_power) {
+                    dc.setColor(hash_mark_low_power_color, Gfx.COLOR_TRANSPARENT);
+                } else {
+                    dc.setColor(hash_mark_color, Gfx.COLOR_TRANSPARENT);
+                }
                 // outside X, outside Y, inside X, inside Y
                 var xo = clock_center_x + clock_radius * hash_marks_clock_xo[i];
                 var yo = clock_center_y + clock_radius * hash_marks_clock_yo[i];
                 var xi = clock_center_x + clock_radius * hash_marks_clock_xi[i];
                 var yi = clock_center_y + clock_radius * hash_marks_clock_yi[i];
                 dc.drawLine(xo, yo, xi, yi);
-                // Digits trigger burn-in protection, so don't draw them in 
+                // Digits trigger burn-in protection, so don't draw them in
                 // low power mode
                 if (!low_power && text_visible && hash_marks_label[i] != "") {
+                    // No text in low power, so no need to set a different color
+                    dc.setColor(text_color, Gfx.COLOR_TRANSPARENT);
                     var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * text_position;
                     var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * text_position;
                     dc.drawText(text_x, text_y, text_font, hash_marks_label[i],
@@ -238,7 +309,7 @@ class SpotlightView extends WatchUi.WatchFace {
             // lines near the edges of the screen. This close to the center,
             // a width of 2 actually triggered detection at the tip.
             dc.setPenWidth(1);
-            dc.setColor(HOUR_LINE_LOW_POWER_COLOR, BACKGROUND_COLOR);
+            dc.setColor(hour_line_low_power_color, background_color);
             x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
             y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
             x2 = screen_center_x + 0.5 * screen_radius * Math.sin(angle) + 0.5f;
@@ -251,19 +322,13 @@ class SpotlightView extends WatchUi.WatchFace {
             dc.drawLine(x1, y1, x2, y2);
         } else {
             dc.setPenWidth(2);
-            dc.setColor(HOUR_LINE_COLOR, BACKGROUND_COLOR);
+            dc.setColor(hour_line_color, background_color);
             x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
             y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
             x2 = screen_center_x - 2 * screen_radius * Math.sin(angle) + 0.5f;
             y2 = screen_center_y + 2 * screen_radius * Math.cos(angle) + 0.5f;
             dc.drawLine(x1, y1, x2, y2);
         }
-    }
-
-    // Called when this View is removed from the screen. Save the
-    // state of this View here. This includes freeing resources from
-    // memory.
-    function onHide() {
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.
