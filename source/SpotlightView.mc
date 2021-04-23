@@ -9,6 +9,8 @@ class SpotlightView extends WatchUi.WatchFace {
     const BACKGROUND_COLOR = Gfx.COLOR_BLACK;
     const HASH_MARK_COLOR = Gfx.COLOR_WHITE;
     const HOUR_LINE_COLOR = Gfx.COLOR_RED;
+    const HASH_MARK_LOW_POWER_COLOR = Gfx.COLOR_DK_GRAY;
+    const HOUR_LINE_LOW_POWER_COLOR = Gfx.COLOR_DK_RED;
     // Starting with a clock exactly the size of the face, how many
     // times to zoom in.
     var zoom_factor as Float = 2.1f;
@@ -28,6 +30,9 @@ class SpotlightView extends WatchUi.WatchFace {
     var screen_center_x, screen_center_y;
     var clock_radius;
 
+    // Whether or not we're in low-power mode
+    var low_power as Boolean;
+
     // Instead of an Array of Objects, separate Arrays, because older watches
     // can't handle lots of Objects
     const NUM_HASH_MARKS = 72;
@@ -42,6 +47,7 @@ class SpotlightView extends WatchUi.WatchFace {
 
     function initialize() {
         WatchFace.initialize();
+        low_power = false;
     }
 
     // Load your resources here
@@ -131,8 +137,11 @@ class SpotlightView extends WatchUi.WatchFace {
     }
 
     function drawHashMarks(dc, angle) {
-
-    	dc.setColor(HASH_MARK_COLOR, BACKGROUND_COLOR);
+        if (low_power) {
+            dc.setColor(HASH_MARK_LOW_POWER_COLOR, BACKGROUND_COLOR);
+        } else {
+            dc.setColor(HASH_MARK_COLOR, BACKGROUND_COLOR);
+        }
         // focal_point * clock_radius * Math.sin(angle) ==
         //    the offset from center of clock to the focal point.
         // Combine them with screen center to bring focal point
@@ -156,7 +165,9 @@ class SpotlightView extends WatchUi.WatchFace {
                 var xi = clock_center_x + clock_radius * hash_marks_clock_xi[i];
                 var yi = clock_center_y + clock_radius * hash_marks_clock_yi[i];
                 dc.drawLine(xo, yo, xi, yi);
-                if (text_visible && hash_marks_label[i] != "") {
+                // Digits trigger burn-in protection, so don't draw them in 
+                // low power mode
+                if (!low_power && text_visible && hash_marks_label[i] != "") {
                     var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * text_position;
                     var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * text_position;
                     dc.drawText(text_x, text_y, text_font, hash_marks_label[i],
@@ -167,17 +178,36 @@ class SpotlightView extends WatchUi.WatchFace {
     }
 
     function drawHourLine(dc, angle) {
-        dc.setColor(HOUR_LINE_COLOR, BACKGROUND_COLOR);
-        dc.setPenWidth(2);
         var x1, y1, x2, y2 as Number;
         // 2 * radius so that we definitely overshoot, for square screens
         // Again, adding 0.5f to do implicit round instead of floor in
         // drawLine.
-        x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
-        y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
-        x2 = screen_center_x - 2 * screen_radius * Math.sin(angle) + 0.5f;
-        y2 = screen_center_y + 2 * screen_radius * Math.cos(angle) + 0.5f;
-        dc.drawLine(x1, y1, x2, y2);
+        if (low_power) {
+            // For burn-in protection on OLED screens, don't draw the hour
+            // line at the center of the screen. Instead we do two thinner
+            // lines near the edges of the screen. This close to the center,
+            // a width of 2 actually triggered detection at the tip.
+            dc.setPenWidth(1);
+            dc.setColor(HOUR_LINE_LOW_POWER_COLOR, BACKGROUND_COLOR);
+            x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
+            y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
+            x2 = screen_center_x + 0.5 * screen_radius * Math.sin(angle) + 0.5f;
+            y2 = screen_center_y - 0.5 * screen_radius * Math.cos(angle) + 0.5f;
+            dc.drawLine(x1, y1, x2, y2);
+            x1 = screen_center_x - 2 * screen_radius * Math.sin(angle) + 0.5f;
+            y1 = screen_center_y + 2 * screen_radius * Math.cos(angle) + 0.5f;
+            x2 = screen_center_x - 0.5 * screen_radius * Math.sin(angle) + 0.5f;
+            y2 = screen_center_y + 0.5 * screen_radius * Math.cos(angle) + 0.5f;
+            dc.drawLine(x1, y1, x2, y2);
+        } else {
+            dc.setPenWidth(2);
+            dc.setColor(HOUR_LINE_COLOR, BACKGROUND_COLOR);
+            x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
+            y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
+            x2 = screen_center_x - 2 * screen_radius * Math.sin(angle) + 0.5f;
+            y2 = screen_center_y + 2 * screen_radius * Math.cos(angle) + 0.5f;
+            dc.drawLine(x1, y1, x2, y2);
+        }
     }
 
     // Called when this View is removed from the screen. Save the
@@ -188,10 +218,12 @@ class SpotlightView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
+        low_power = false;
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
+        low_power = true;
     }
 
 }
