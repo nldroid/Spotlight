@@ -4,13 +4,15 @@
     	<property id="focalPoint" type="float">0.8</property>
     	<property id="textPosition" type="float">0.8</property>
         <property id="textVisible" type="boolean">true</property>
+        <property id="textVisibleLowPower" type="boolean">false</property>
         <property id="font" type="number">2</property>
-        <property id="fontColor" type="string">FFFFFF</property>
         <property id="numerals" type="number">0</property>
+        <property id="fontColor" type="string">FFFFFF</property>
         <property id="backgroundColor" type="string">000000</property>
         <property id="hashMarkColor" type="string">FFFFFF</property>
         <property id="hourLineColor" type="string">FF0000</property>
-        <property id="hashMarkLowPowerColor" type="string">555555</property>
+        <property id="fontLowPowerColor" type="string">606060</property>
+        <property id="hashMarkLowPowerColor" type="string">707070</property>
         <property id="hourLineLowPowerColor" type="string">AA0000</property>
     	<property id="markLargeLength" type="float">0.1</property>
     	<property id="markLargeWidth" type="number">3</property>
@@ -31,6 +33,9 @@
             <settingConfig type="numeric" min="0.5" max ="1.5" />
 		</setting>
         <setting propertyKey="@Properties.textVisible" title="@Strings.textVisibleTitle" prompt="@Strings.textVisiblePrompt">
+            <settingConfig type="boolean" />
+		</setting>
+        <setting propertyKey="@Properties.textVisibleLowPower" title="@Strings.textVisibleLowPowerTitle" prompt="@Strings.textVisibleLowPowerPrompt">
             <settingConfig type="boolean" />
 		</setting>
         <setting propertyKey="@Properties.font" title="@Strings.fontTitle" prompt="@Strings.fontPrompt">
@@ -57,14 +62,14 @@
                 <listEntry value="19">@Strings.font19</listEntry>
             </settingConfig>
 		</setting>
-        <setting propertyKey="@Properties.fontColor" title="@Strings.numeralsColorTitle" prompt="@Strings.numeralsColorPrompt">
-            <settingConfig type="alphaNumeric" />
-		</setting>
         <setting propertyKey="@Properties.numerals" title="@Strings.numeralsTitle" prompt="@Strings.numeralsPrompt">
             <settingConfig type="list">
                 <listEntry value="0">@Strings.numeralsArabic</listEntry>
                 <listEntry value="1">@Strings.numeralsRoman</listEntry>
             </settingConfig>
+		</setting>
+        <setting propertyKey="@Properties.fontColor" title="@Strings.numeralsColorTitle" prompt="@Strings.numeralsColorPrompt">
+            <settingConfig type="alphaNumeric" />
 		</setting>
         <setting propertyKey="@Properties.backgroundColor" title="@Strings.backgroundColorTitle" prompt="@Strings.backgroundColorPrompt">
             <settingConfig type="alphaNumeric" />
@@ -73,6 +78,9 @@
             <settingConfig type="alphaNumeric" />
 		</setting>
         <setting propertyKey="@Properties.hourLineColor" title="@Strings.hourLineColorTitle" prompt="@Strings.hourLineColorPrompt">
+            <settingConfig type="alphaNumeric" />
+		</setting>
+        <setting propertyKey="@Properties.fontLowPowerColor" title="@Strings.numeralsLowPowerColorTitle" prompt="@Strings.numeralsLowPowerColorPrompt">
             <settingConfig type="alphaNumeric" />
 		</setting>
         <setting propertyKey="@Properties.hashMarkLowPowerColor" title="@Strings.hashMarkLowPowerColorTitle" prompt="@Strings.hashMarkLowPowerColorPrompt">

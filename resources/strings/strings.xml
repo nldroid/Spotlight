@@ -8,6 +8,8 @@
     <string id="textPositionPrompt">Where numerals should be positioned. 0 is the center of the clock, 1 is the edge of the clock</string>
     <string id="textVisibleTitle">Numeral visibility</string>
     <string id="textVisiblePrompt">Whether or not to show the numbers for the hours</string>
+    <string id="textVisibleLowPowerTitle">Low power numeral visibility</string>
+    <string id="textVisibleLowPowerPrompt">Whether or not to show the numbers for the hours when the watch is in low power mode. Caution, the numbers tend to trigger burn-in protection more, which will turn off the display completely.</string>
     <string id="fontTitle">Font</string>
     <string id="fontPrompt">Font used for numbers. Some might break things on older watches.</string>
     <string id="font0">Extra tiny Connect IQ font</string>
@@ -32,6 +34,8 @@
     <string id="font19">Glance number only font </string>
     <string id="numeralsColorTitle">Numeral color</string>
     <string id="numeralsColorPrompt">Text color for numerals, in RRGGBB hexadecimal form. 000000 is black, FFFFFF is white, 5F0000 is dark red.</string>
+    <string id="numeralsLowPowerColorTitle">Low power numeral color</string>
+    <string id="numeralsLowPowerColorPrompt">Text color for numerals when the watch is in low power mode, in RRGGBB hexadecimal form. 000000 is black, FFFFFF is white, 5F0000 is dark red.</string>
     <string id="numeralsTitle">Numeral type</string>
     <string id="numeralsPrompt">Whether to use roman or arabic numerals. Roman will not work with number only fonts.</string>
     <string id="numeralsArabic">Arabic</string>

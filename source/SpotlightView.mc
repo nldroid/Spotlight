@@ -21,8 +21,10 @@ class SpotlightView extends WatchUi.WatchFace {
     // How far from the center of the clock the number should be printed
     var text_position as Float = 0.8f;
     var text_visible as Boolean = true;
+    var text_visible_low_power as Boolean = false;
     var text_font = Gfx.FONT_SMALL;
     var text_color as Number = Gfx.COLOR_BLACK;
+    var text_low_power_color as Number = Gfx.COLOR_BLACK;
     var roman_numerals as Boolean = false;
     // Hash mark sizes:
     // l = hour, m = 30 min, s = 10 min
@@ -85,8 +87,10 @@ class SpotlightView extends WatchUi.WatchFace {
             focal_point = Properties.getValue("focalPoint");
             text_position = Properties.getValue("textPosition");
             text_visible = Properties.getValue("textVisible");
+            text_visible_low_power = Properties.getValue("textVisibleLowPower");
             text_font = Properties.getValue("font");
             text_color = getColor("fontColor", text_color);
+            text_low_power_color = getColor("fontLowPowerColor", text_color);
             switch (Properties.getValue("numerals")) {
                 case 0:
                     roman_numerals = false;
@@ -267,17 +271,26 @@ class SpotlightView extends WatchUi.WatchFace {
         var clock_center_y as Float = screen_center_y + focal_point * clock_radius * Math.cos(angle) + 0.5f;
         var index_guess = (72.0f * angle / (2 * Math.PI)).toNumber();
         var dist;
+        // Determine what colors and visibility to use outside of the loop
+        var m_color as Number;
+        var t_visible as Boolean;
+        var t_color as Number;
+        if (low_power) {
+            m_color = hash_mark_low_power_color;
+            t_visible = text_visible_low_power;
+            t_color = text_color;
+        } else {
+            m_color = hash_mark_color;
+            t_visible = text_visible;
+            t_color = text_low_power_color;
+        }
         for (var i = 0; i < NUM_HASH_MARKS; ++i) {
             dist = (i - index_guess).abs();
             if (dist <= 9 || dist >= 63) {
                 dc.setPenWidth(hash_marks_width[i]);
                 // Transparent background so people can get their numbers nice and close
                 // or overlaying lines.
-                if (low_power) {
-                    dc.setColor(hash_mark_low_power_color, Gfx.COLOR_TRANSPARENT);
-                } else {
-                    dc.setColor(hash_mark_color, Gfx.COLOR_TRANSPARENT);
-                }
+                dc.setColor(m_color, Gfx.COLOR_TRANSPARENT);
                 // outside X, outside Y, inside X, inside Y
                 var xo = clock_center_x + clock_radius * hash_marks_clock_xo[i];
                 var yo = clock_center_y + clock_radius * hash_marks_clock_yo[i];
@@ -286,9 +299,9 @@ class SpotlightView extends WatchUi.WatchFace {
                 dc.drawLine(xo, yo, xi, yi);
                 // Digits trigger burn-in protection, so don't draw them in
                 // low power mode
-                if (!low_power && text_visible && hash_marks_label[i] != "") {
+                if (t_visible && hash_marks_label[i] != "") {
                     // No text in low power, so no need to set a different color
-                    dc.setColor(text_color, Gfx.COLOR_TRANSPARENT);
+                    dc.setColor(t_color, Gfx.COLOR_TRANSPARENT);
                     var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * text_position;
                     var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * text_position;
                     dc.drawText(text_x, text_y, text_font, hash_marks_label[i],
