@@ -7,8 +7,8 @@
     <string id="textPositionTitle">Cijfer positie</string>
     <string id="textPositionPrompt">Waar de cijfers staan. 0 is het midden van de klok, 1 is de rand van de klok.</string>
     <string id="textVisibleTitle">Cijfers zichtbaar</string>
-    <string id="textVisiblePrompt">Cijfers zichtbaar in spaarstand</string>
-    <string id="textVisibleLowPowerTitle">Cijfer zichtbaarheid (spaarstand)</string>
+    <string id="textVisiblePrompt">Of de cijfers zichtbaar zijn</string>
+    <string id="textVisibleLowPowerTitle">Cijfers zichtbaar in spaarstand</string>
     <string id="textVisibleLowPowerPrompt">Of de uur cijfers zichtbaar zijn wanneer het horloge in spaarstand staat</string>
     <string id="fontTitle">Cijfer lettertype</string>
     <string id="fontPrompt">Lettertype voor de cijfers. Sommige instellingen kunnen dingen breken op oudere horloges.</string>
