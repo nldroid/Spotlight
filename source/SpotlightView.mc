@@ -23,8 +23,8 @@ class SpotlightView extends WatchUi.WatchFace {
     var text_visible as Boolean = true;
     var text_visible_low_power as Boolean = false;
     var text_font = Gfx.FONT_SMALL;
-    var text_color as Number = Gfx.COLOR_BLACK;
-    var text_low_power_color as Number = Gfx.COLOR_BLACK;
+    var text_color as Number = Gfx.COLOR_WHITE;
+    var text_low_power_color as Number = Gfx.COLOR_DK_GRAY;
     var roman_numerals as Boolean = false;
     // Hash mark sizes:
     // l = hour, m = 30 min, s = 10 min
@@ -278,11 +278,11 @@ class SpotlightView extends WatchUi.WatchFace {
         if (low_power) {
             m_color = hash_mark_low_power_color;
             t_visible = text_visible_low_power;
-            t_color = text_color;
+            t_color = text_low_power_color;
         } else {
             m_color = hash_mark_color;
             t_visible = text_visible;
-            t_color = text_low_power_color;
+            t_color = text_color;
         }
         for (var i = 0; i < NUM_HASH_MARKS; ++i) {
             dist = (i - index_guess).abs();
