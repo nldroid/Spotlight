@@ -11,3 +11,5 @@ I really wanted to have this watch face for my Venu so i tried to create it myse
 This is the result:
 
 ![animated watch face](images/animated_watch_face_small.gif)
+
+Get it from the [Garmin Connect IQ Store](https://apps.garmin.com/en-US/apps/b900b0b7-930c-4889-8878-bfae92a72b82)
