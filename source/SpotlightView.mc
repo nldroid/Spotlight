@@ -67,13 +67,95 @@ class SpotlightView extends WatchUi.WatchFace {
     // Since toNumberWithBase() doesn't seem to throw any exception
     // on format errors, and even with `as Number` a `null` can happily
     // be assigned, use a convenience function for reading colors from
-    // settings.
+    // settings. Also catch exceptions, because they apparently happen
+    // in some cases.
     function getColor(key, default_color as Number) as Number {
-        var color as Number or Null = Properties.getValue(key).toNumberWithBase(16);
-        if (color != null) {
-            return color;
+        try {
+            var color as Number or Null = Properties.getValue(key).toNumberWithBase(16);
+            if (color != null) {
+                return color;
+            }
+        } catch (e) {
         }
         return default_color;
+    }
+
+    // Convenience functions for floats, numbers and booleans, for
+    // exceptions that seem to happen on some devices. 
+    function getFloat(key, default_value as Float) as Float {
+        try {
+            var value as Float or Null = Properties.getValue(key);
+            if (value != null) {
+                return value;
+            }
+        } catch (e) {
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
+        }
+        // apparently some Android versions send strings...
+        try {
+            var value as Float or Null = Properties.getValue(key).toFloat();
+            if (value != null) {
+                Sys.println("Property \"" + key + "\" was a string");
+                return value;
+            }
+        } catch (e) {
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
+        }
+        return default_value;
+    }
+    function getNumber(key, default_value as Number) as Number {
+        try {
+            var value as Number or Null = Properties.getValue(key);
+            if (value != null) {
+                return value;
+            }
+        } catch (e) {
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
+        }
+        // apparently some Android versions send strings...
+        try {
+            var value as Number or Null = Properties.getValue(key).toNumber();
+            if (value != null) {
+                Sys.println("Property \"" + key + "\" was a string");
+                return value;
+            }
+        } catch (e) {
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
+        }
+        return default_value;
+    }
+    function getBoolean(key, default_value as Boolean) as Boolean {
+        try {
+            var value as Boolean or Null = Properties.getValue(key);
+            if (value != null) {
+                return value;
+            }
+        } catch (e) {
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
+        }
+        // apparently some Android versions send strings...
+        try {
+            var value as String or Null = Properties.getValue(key);
+            if (value != null) {
+                Sys.println("Property \"" + key + "\" was a string: " + value);
+                if (value.toLower() == "true") {
+                    return true;
+                } else if (value.toLower() == "false") {
+                    return false;
+                } else {
+                    return default_value;
+                }
+            }
+        } catch (e) {
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
+        }
+        return default_value;
     }
 
     // Here we check all the settings (if possible) and do all the
@@ -83,15 +165,15 @@ class SpotlightView extends WatchUi.WatchFace {
     // fixed the SDK some.
     function setupData() {
         if (Toybox.Application has :Properties) {
-            zoom_factor = Properties.getValue("zoomFactor");
-            focal_point = Properties.getValue("focalPoint");
-            text_position = Properties.getValue("textPosition");
-            text_visible = Properties.getValue("textVisible");
-            text_visible_low_power = Properties.getValue("textVisibleLowPower");
-            text_font = Properties.getValue("font");
+            zoom_factor = getFloat("zoomFactor", zoom_factor);
+            focal_point = getFloat("focalPoint", focal_point);
+            text_position = getFloat("textPosition", text_position);
+            text_visible = getBoolean("textVisible", text_visible);
+            text_visible_low_power = getBoolean("textVisibleLowPower", text_visible_low_power);
+            text_font = getNumber("font", text_font);
             text_color = getColor("fontColor", text_color);
             text_low_power_color = getColor("fontLowPowerColor", text_color);
-            switch (Properties.getValue("numerals")) {
+            switch (getNumber("numerals", roman_numerals ? 1 : 0)) {
                 case 0:
                     roman_numerals = false;
                     break;
@@ -104,12 +186,12 @@ class SpotlightView extends WatchUi.WatchFace {
             hour_line_color = getColor("hourLineColor", hour_line_color);
             hash_mark_low_power_color = getColor("hashMarkLowPowerColor", hash_mark_low_power_color);
             hour_line_low_power_color = getColor("hourLineLowPowerColor", hour_line_low_power_color);
-            mark_ll = Properties.getValue("markLargeLength");
-            mark_lw = Properties.getValue("markLargeWidth");
-            mark_ml = Properties.getValue("markMediumLength");
-            mark_mw = Properties.getValue("markMediumWidth");
-            mark_sl = Properties.getValue("markSmallLength");
-            mark_sw = Properties.getValue("markSmallWidth");
+            mark_ll = getFloat("markLargeLength", mark_ll);
+            mark_lw = getNumber("markLargeWidth", mark_lw);
+            mark_ml = getFloat("markMediumLength", mark_ml);
+            mark_mw = getNumber("markMediumWidth", mark_mw);
+            mark_sl = getFloat("markSmallLength", mark_sl);
+            mark_sw = getNumber("markSmallWidth", mark_sw);
         }
 
         clock_radius = screen_radius * zoom_factor;
@@ -207,11 +289,6 @@ class SpotlightView extends WatchUi.WatchFace {
     // loading resources into memory.
     function onShow() {
         face_hidden = false;
-        // Only if this device has the Properties API do we want to
-        // redo the data to reflect changes in settings.
-        if (Toybox.Application has :Properties) {
-            setupData();
-        }
     }
 
     // Called when this View is removed from the screen. Save the
