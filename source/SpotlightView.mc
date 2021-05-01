@@ -41,6 +41,7 @@ class SpotlightView extends WatchUi.WatchFace {
     var screen_width, screen_height;
     var screen_radius;
     var screen_center_x, screen_center_y;
+    var have_screen_dimensions as Boolean = false;
     var clock_radius;
 
     // Whether or not we're in low-power mode
@@ -76,15 +77,26 @@ class SpotlightView extends WatchUi.WatchFace {
             if (color != null && color instanceof String) {
                 // We expect the string to be exact 6 long (FFFFFF)
                 if (color.length() == 6) {
-                    return color.toNumberWithBase(16);
+                    Sys.println("DEBUG: getColor[" + key + "]: string=\"" + color + "\"");
+                    var color_number = color.toNumberWithBase(16);
+                    Sys.println("DEBUG: getColor[" + key + "]: number=" + color_number.format("%x"));
+                    return color_number;
                 } else {
-                    Sys.println("Property \"" + key + "\" in function getColor had length: " + color.length());
+                    Sys.println("ERROR: getColor[" + key + "]: length=" + color.length() + " value=\"" + color + "\"");
                 }   	
+            } else {
+                if (color == null) {
+                    Sys.println("ERROR: getColor[" + key + "]: getValue() returned null");
+                }
+                if (!color instanceof String) {
+                    Sys.println("ERROR: getColor[" + key + "]: getValue() returned something other than a String");
+                }
             }
         } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
+            Sys.println("ERROR: getColor[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
+        Sys.println("DEBUG: getColor[" + key + "]: returning default: " + default_color.format("%x"));
         return default_color;
     }
 
@@ -95,16 +107,24 @@ class SpotlightView extends WatchUi.WatchFace {
             var value = Properties.getValue(key);
             if (value != null) {
                 if (value instanceof Float) {
+                    Sys.println("DEBUG: getFloat[" + key + "]: float=" + value.format("%f"));
                     return value;
                 } else if (value instanceof String) {
-                    Sys.println("Property \"" + key + "\" in function getFloat was a string: " + value);
+                    Sys.println("DEBUG: getFloat[" + key + "]: string=\"" + value + "\"");
+                    var value_float = value.toFloat();
+                    Sys.println("DEBUG: getFloat[" + key + "]: float=" + value.format("%f"));
                     return value.toFloat();
-                }	
-            }    
+                } else {
+                    Sys.println("ERROR: getFloat[" + key + "]: getValue() returned unexpected type");
+                }
+            } else {
+                Sys.println("ERROR: getFloat[" + key + "]: getValue() returned null");
+            }
         } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
+            Sys.println("ERROR: getFloat[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
+        Sys.println("DEBUG: getFloat[" + key + "]: returning default: " + default_value.format("%f"));
         return default_value;
     }
     
@@ -113,17 +133,24 @@ class SpotlightView extends WatchUi.WatchFace {
             var value = Properties.getValue(key);
             if (value != null) {
                 if (value instanceof Number) {
+                    Sys.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
                     return value;
                 } else if (value instanceof String) {
-                    Sys.println("Property \"" + key + "\" in function getNumber was a string: " + value);
+                    Sys.println("DEBUG: getNumber[" + key + "]: string=\"" + value + "\"");
+                    var value_float = value.toNumber();
+                    Sys.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
                     return value.toNumber();
-                }	
-                    
+                } else {
+                    Sys.println("ERROR: getNumber[" + key + "]: getValue() returned unexpected type");
+                }
+            } else {
+                Sys.println("ERROR: getNumber[" + key + "]: getValue() returned null");
             }
         } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
+            Sys.println("DEBUG: getNumber[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
+        Sys.println("DEBUG: getNumber[" + key + "]: returning default: " + default_value.format("%d"));
         return default_value;
     }
     
@@ -132,22 +159,30 @@ class SpotlightView extends WatchUi.WatchFace {
             var value as Boolean or Null = Properties.getValue(key);
             if (value != null) {
                 if (value instanceof Boolean) {
+                    Sys.println("DEBUG: getBoolean[" + key + "]: boolean=" + (value ? "true" : "false"));
                     return value;
                 } else if (value instanceof String) {
-                    Sys.println("Property \"" + key + "\" in function getBoolean was a string: " + value);
+                    Sys.println("DEBUG: getBoolean[" + key + "]: string=\"" + value + "\"");
                     if (value.toLower() == "true") {
+                        Sys.println("DEBUG: getBoolean[" + key + "]: boolean=true");
                         return true;
                     } else if (value.toLower() == "false") {
+                        Sys.println("DEBUG: getBoolean[" + key + "]: boolean=false");
                         return false;
                     } else {
                         return default_value;
                     }
-                }                	
+                } else {
+                    Sys.println("ERROR: getBoolean[" + key + "]: getValue() returned unexpected type");
+                }
+            } else {
+                Sys.println("ERROR: getBoolean[" + key + "]: getValue() returned null");
             }
         } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
+            Sys.println("ERROR: Exception while reading property \"" + key + "\":");
             e.printStackTrace();
         }
+        Sys.println("DEBUG: getBoolean[" + key + "]: returning default: " + (default_value ? "true" : "false"));
         return default_value;
     }
 
@@ -157,6 +192,10 @@ class SpotlightView extends WatchUi.WatchFace {
     // this should actually be slower, but it seems faster. Possibly Garmin
     // fixed the SDK some.
     function setupData() {
+        if (!have_screen_dimensions) {
+            // don't try to do anything before we have the screen's dimensions
+            return;
+        }
         if (Toybox.Application has :Properties) {
             zoom_factor = getFloat("zoomFactor", zoom_factor);
             focal_point = getFloat("focalPoint", focal_point);
@@ -274,6 +313,12 @@ class SpotlightView extends WatchUi.WatchFace {
         // -1 seems to line up better in the simulator
         screen_center_x = screen_width / 2 - 1;
         screen_center_y = screen_height / 2 - 1;
+        Sys.println("DEBUG: screen w=" + screen_width.format("%d") +
+                                " h=" + screen_height.format("%d") +
+                                " cx=" + screen_center_x.format("%d") +
+                                " cy=" + screen_center_y.format("%d") +
+                                " radius=" + screen_radius.format("%f"));
+        have_screen_dimensions = true;
         setupData();
     }
 
