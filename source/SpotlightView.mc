@@ -71,9 +71,13 @@ class SpotlightView extends WatchUi.WatchFace {
     // in some cases.
     function getColor(key, default_color as Number) as Number {
         try {
-            var color as Number or Null = Properties.getValue(key).toNumberWithBase(16);
-            if (color != null) {
-                return color;
+        	var color = Properties.getValue(key);
+        	// Only string instances have the toNumberWithBase function
+            if (color != null && color instanceof String) {
+            	// We expect the string to be exact 6 long (FFFFFF)
+            	if (color.length() == 6) {
+                	return color.toNumberWithBase(16);
+            	}    	
             }
         } catch (e) {
         }
@@ -84,43 +88,33 @@ class SpotlightView extends WatchUi.WatchFace {
     // exceptions that seem to happen on some devices. 
     function getFloat(key, default_value as Float) as Float {
         try {
-            var value as Float or Null = Properties.getValue(key);
+            var value = Properties.getValue(key);
             if (value != null) {
-                return value;
-            }
-        } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
-            e.printStackTrace();
-        }
-        // apparently some Android versions send strings...
-        try {
-            var value as Float or Null = Properties.getValue(key).toFloat();
-            if (value != null) {
-                Sys.println("Property \"" + key + "\" was a string");
-                return value;
-            }
+	            if (value instanceof Float) {
+	                return value;
+	            } else if (value instanceof String) {
+	                Sys.println("Property \"" + key + "\" was a string");
+	                return value.toFloat();
+	            }	
+	        }    
         } catch (e) {
             Sys.println("Exception while reading property \"" + key + "\":");
             e.printStackTrace();
         }
         return default_value;
     }
+    
     function getNumber(key, default_value as Number) as Number {
         try {
-            var value as Number or Null = Properties.getValue(key);
+            var value = Properties.getValue(key);
             if (value != null) {
-                return value;
-            }
-        } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
-            e.printStackTrace();
-        }
-        // apparently some Android versions send strings...
-        try {
-            var value as Number or Null = Properties.getValue(key).toNumber();
-            if (value != null) {
-                Sys.println("Property \"" + key + "\" was a string");
-                return value;
+            	if (value instanceof Number) {
+                	return value;
+                } else if (value instanceof String) {
+	                Sys.println("Property \"" + key + "\" was a string");
+	                return value.toNumber();
+	            }	
+                	
             }
         } catch (e) {
             Sys.println("Exception while reading property \"" + key + "\":");
@@ -128,28 +122,23 @@ class SpotlightView extends WatchUi.WatchFace {
         }
         return default_value;
     }
+    
     function getBoolean(key, default_value as Boolean) as Boolean {
         try {
             var value as Boolean or Null = Properties.getValue(key);
             if (value != null) {
-                return value;
-            }
-        } catch (e) {
-            Sys.println("Exception while reading property \"" + key + "\":");
-            e.printStackTrace();
-        }
-        // apparently some Android versions send strings...
-        try {
-            var value as String or Null = Properties.getValue(key);
-            if (value != null) {
-                Sys.println("Property \"" + key + "\" was a string: " + value);
-                if (value.toLower() == "true") {
-                    return true;
-                } else if (value.toLower() == "false") {
-                    return false;
-                } else {
-                    return default_value;
-                }
+            	if (value instanceof Boolean) {
+                	return value;
+                } else if (value instanceof String) {
+	                Sys.println("Property \"" + key + "\" was a string");
+	                if (value.toLower() == "true") {
+	                    return true;
+	                } else if (value.toLower() == "false") {
+	                    return false;
+	                } else {
+	                    return default_value;
+	                }
+				}                	
             }
         } catch (e) {
             Sys.println("Exception while reading property \"" + key + "\":");
