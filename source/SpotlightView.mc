@@ -77,9 +77,13 @@ class SpotlightView extends WatchUi.WatchFace {
             	// We expect the string to be exact 6 long (FFFFFF)
             	if (color.length() == 6) {
                 	return color.toNumberWithBase(16);
-            	}    	
+            	} else {
+            		Sys.println("Property \"" + key + "\" in function getColor had length: " + color.length());
+            	}   	
             }
         } catch (e) {
+        	Sys.println("Exception while reading property \"" + key + "\":");
+        	e.printStackTrace();
         }
         return default_color;
     }
@@ -93,7 +97,7 @@ class SpotlightView extends WatchUi.WatchFace {
 	            if (value instanceof Float) {
 	                return value;
 	            } else if (value instanceof String) {
-	                Sys.println("Property \"" + key + "\" was a string");
+	                Sys.println("Property \"" + key + "\" in function getFloat was a string: " + value);
 	                return value.toFloat();
 	            }	
 	        }    
@@ -111,7 +115,7 @@ class SpotlightView extends WatchUi.WatchFace {
             	if (value instanceof Number) {
                 	return value;
                 } else if (value instanceof String) {
-	                Sys.println("Property \"" + key + "\" was a string");
+	                Sys.println("Property \"" + key + "\" in function getNumber was a string: " + value);
 	                return value.toNumber();
 	            }	
                 	
@@ -130,7 +134,7 @@ class SpotlightView extends WatchUi.WatchFace {
             	if (value instanceof Boolean) {
                 	return value;
                 } else if (value instanceof String) {
-	                Sys.println("Property \"" + key + "\" was a string");
+	                Sys.println("Property \"" + key + "\" in function getBoolean was a string: " + value);
 	                if (value.toLower() == "true") {
 	                    return true;
 	                } else if (value.toLower() == "false") {
