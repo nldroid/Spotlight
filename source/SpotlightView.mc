@@ -71,19 +71,19 @@ class SpotlightView extends WatchUi.WatchFace {
     // in some cases.
     function getColor(key, default_color as Number) as Number {
         try {
-        	var color = Properties.getValue(key);
-        	// Only string instances have the toNumberWithBase function
+            var color = Properties.getValue(key);
+            // Only string instances have the toNumberWithBase function
             if (color != null && color instanceof String) {
-            	// We expect the string to be exact 6 long (FFFFFF)
-            	if (color.length() == 6) {
-                	return color.toNumberWithBase(16);
-            	} else {
-            		Sys.println("Property \"" + key + "\" in function getColor had length: " + color.length());
-            	}   	
+                // We expect the string to be exact 6 long (FFFFFF)
+                if (color.length() == 6) {
+                    return color.toNumberWithBase(16);
+                } else {
+                    Sys.println("Property \"" + key + "\" in function getColor had length: " + color.length());
+                }   	
             }
         } catch (e) {
-        	Sys.println("Exception while reading property \"" + key + "\":");
-        	e.printStackTrace();
+            Sys.println("Exception while reading property \"" + key + "\":");
+            e.printStackTrace();
         }
         return default_color;
     }
@@ -94,13 +94,13 @@ class SpotlightView extends WatchUi.WatchFace {
         try {
             var value = Properties.getValue(key);
             if (value != null) {
-	            if (value instanceof Float) {
-	                return value;
-	            } else if (value instanceof String) {
-	                Sys.println("Property \"" + key + "\" in function getFloat was a string: " + value);
-	                return value.toFloat();
-	            }	
-	        }    
+                if (value instanceof Float) {
+                    return value;
+                } else if (value instanceof String) {
+                    Sys.println("Property \"" + key + "\" in function getFloat was a string: " + value);
+                    return value.toFloat();
+                }	
+            }    
         } catch (e) {
             Sys.println("Exception while reading property \"" + key + "\":");
             e.printStackTrace();
@@ -112,13 +112,13 @@ class SpotlightView extends WatchUi.WatchFace {
         try {
             var value = Properties.getValue(key);
             if (value != null) {
-            	if (value instanceof Number) {
-                	return value;
+                if (value instanceof Number) {
+                    return value;
                 } else if (value instanceof String) {
-	                Sys.println("Property \"" + key + "\" in function getNumber was a string: " + value);
-	                return value.toNumber();
-	            }	
-                	
+                    Sys.println("Property \"" + key + "\" in function getNumber was a string: " + value);
+                    return value.toNumber();
+                }	
+                    
             }
         } catch (e) {
             Sys.println("Exception while reading property \"" + key + "\":");
@@ -131,18 +131,18 @@ class SpotlightView extends WatchUi.WatchFace {
         try {
             var value as Boolean or Null = Properties.getValue(key);
             if (value != null) {
-            	if (value instanceof Boolean) {
-                	return value;
+                if (value instanceof Boolean) {
+                    return value;
                 } else if (value instanceof String) {
-	                Sys.println("Property \"" + key + "\" in function getBoolean was a string: " + value);
-	                if (value.toLower() == "true") {
-	                    return true;
-	                } else if (value.toLower() == "false") {
-	                    return false;
-	                } else {
-	                    return default_value;
-	                }
-				}                	
+                    Sys.println("Property \"" + key + "\" in function getBoolean was a string: " + value);
+                    if (value.toLower() == "true") {
+                        return true;
+                    } else if (value.toLower() == "false") {
+                        return false;
+                    } else {
+                        return default_value;
+                    }
+                }                	
             }
         } catch (e) {
             Sys.println("Exception while reading property \"" + key + "\":");
