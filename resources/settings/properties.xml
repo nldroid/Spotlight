@@ -1,8 +1,8 @@
 <resources>
     <properties>
-    	<property id="zoomFactor" type="float">2.1</property>
-    	<property id="focalPoint" type="float">0.8</property>
-    	<property id="textPosition" type="float">0.8</property>
+    	<property id="zoomFactor" type="number">210</property>
+    	<property id="focalPoint" type="number">80</property>
+    	<property id="textPosition" type="number">80</property>
         <property id="textVisible" type="boolean">true</property>
         <property id="textVisibleLowPower" type="boolean">false</property>
         <property id="font" type="number">2</property>
@@ -14,23 +14,23 @@
         <property id="fontLowPowerColor" type="string">606060</property>
         <property id="hashMarkLowPowerColor" type="string">707070</property>
         <property id="hourLineLowPowerColor" type="string">AA0000</property>
-    	<property id="markLargeLength" type="float">0.1</property>
+    	<property id="markLargeLength" type="number">10</property>
     	<property id="markLargeWidth" type="number">3</property>
-    	<property id="markMediumLength" type="float">0.05</property>
+    	<property id="markMediumLength" type="number">5</property>
     	<property id="markMediumWidth" type="number">2</property>
-    	<property id="markSmallLength" type="float">0.025</property>
+    	<property id="markSmallLength" type="number">2</property>
     	<property id="markSmallWidth" type="number">1</property>
     </properties>
 
     <settings>
         <setting propertyKey="@Properties.zoomFactor" title="@Strings.zoomFactorTitle" prompt="@Strings.zoomFactorPrompt">
-            <settingConfig type="numeric" min="2.0" max ="4.0" />
+            <settingConfig type="numeric" min="200" max ="400" />
 		</setting>
         <setting propertyKey="@Properties.focalPoint" title="@Strings.focalPointTitle" prompt="@Strings.focalPointPrompt">
-            <settingConfig type="numeric" min="0.5" max ="1.5" />
+            <settingConfig type="numeric" min="50" max ="150" />
 		</setting>
         <setting propertyKey="@Properties.textPosition" title="@Strings.textPositionTitle" prompt="@Strings.textPositionPrompt">
-            <settingConfig type="numeric" min="0.5" max ="1.5" />
+            <settingConfig type="numeric" min="50" max ="150" />
 		</setting>
         <setting propertyKey="@Properties.textVisible" title="@Strings.textVisibleTitle" prompt="@Strings.textVisiblePrompt">
             <settingConfig type="boolean" />
@@ -90,19 +90,19 @@
             <settingConfig type="alphaNumeric" />
 		</setting>
         <setting propertyKey="@Properties.markLargeLength" title="@Strings.markLargeLengthTitle" prompt="@Strings.markLargeLengthPrompt">
-            <settingConfig type="numeric" min="0" max ="1" />
+            <settingConfig type="numeric" min="0" max ="100" />
 		</setting>
         <setting propertyKey="@Properties.markLargeWidth" title="@Strings.markLargeWidthTitle" prompt="@Strings.markLargeWidthPrompt">
             <settingConfig type="numeric" min="0" max ="10" />
 		</setting>
         <setting propertyKey="@Properties.markMediumLength" title="@Strings.markMediumLengthTitle" prompt="@Strings.markMediumLengthPrompt">
-            <settingConfig type="numeric" min="0" max ="1" />
+            <settingConfig type="numeric" min="0" max ="100" />
 		</setting>
         <setting propertyKey="@Properties.markMediumWidth" title="@Strings.markMediumWidthTitle" prompt="@Strings.markMediumWidthPrompt">
             <settingConfig type="numeric" min="0" max ="10" />
 		</setting>
         <setting propertyKey="@Properties.markSmallLength" title="@Strings.markSmallLengthTitle" prompt="@Strings.markSmallLengthPrompt">
-            <settingConfig type="numeric" min="0" max ="1" />
+            <settingConfig type="numeric" min="0" max ="100" />
 		</setting>
         <setting propertyKey="@Properties.markSmallWidth" title="@Strings.markSmallWidthTitle" prompt="@Strings.markSmallWidthPrompt">
             <settingConfig type="numeric" min="0" max ="10" />

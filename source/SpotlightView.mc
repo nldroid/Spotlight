@@ -3,6 +3,7 @@ using Toybox.Graphics as Gfx;
 using Toybox.Lang;
 using Toybox.System as Sys;
 using Toybox.Application.Properties;
+using Toybox.Math;
 
 class SpotlightView extends WatchUi.WatchFace {
 
@@ -101,31 +102,51 @@ class SpotlightView extends WatchUi.WatchFace {
     }
 
     // Convenience functions for floats, numbers and booleans, for
-    // exceptions that seem to happen on some devices. 
-    function getFloat(key, default_value as Float) as Float {
+    // exceptions that seem to happen on some devices.
+
+    // It turns out that Android presents Floats as Strings in de settings
+    // file. And in some cases, toFloat() on that String doesn't actually
+    // work, due to comma vs decimal point mismatch. Super annoying, but
+    // percentages are probably easier to grok for users anyways.
+    function getPercentAsFloat(key, default_value as Float) as Float {
         try {
-            var value = Properties.getValue(key);
-            if (value != null) {
-                if (value instanceof Float) {
-                    Sys.println("DEBUG: getFloat[" + key + "]: float=" + value.format("%f"));
+            var percent = Properties.getValue(key);
+            if (percent != null) {
+                if (percent instanceof Number) {
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent.format("%d"));
+                    var value = (percent as Float) / 100f;
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
                     return value;
-                } else if (value instanceof String) {
-                    Sys.println("DEBUG: getFloat[" + key + "]: string=\"" + value + "\"");
-                    return default_value;
-                    var value_float = value.toFloat();
-                    Sys.println("DEBUG: getFloat[" + key + "]: float=" + value.format("%f"));
-                    return value.toFloat();
+                } else if (percent instanceof Float) {
+                    // leaving this in just in case, for possible previous version's settings
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + percent.format("%f"));
+                    var percent_number as Number = Math.round(percent * 100).toNumber();
+                    try {
+                        Sys.println("DEBUG: getPercentAsFloat[" + key + "]: saving setting number=" + percent_number.format("%d"));
+                        Properties.setValue(key, percent_number);
+                    } catch (e) {
+                        Sys.println("ERROR: getPercentAsFloat[" + key + "]: Exception while writing property:");
+                        e.printStackTrace();
+                    }
+                    return percent;
+                } else if (percent instanceof String) {
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: string=\"" + percent + "\"");
+                    var percent_number = percent.toNumber();
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent.format("%d"));
+                    var value = (percent as Float) / 100f;
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + percent.format("%f"));
+                    return percent.toFloat();
                 } else {
-                    Sys.println("ERROR: getFloat[" + key + "]: getValue() returned unexpected type");
+                    Sys.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned unexpected type");
                 }
             } else {
-                Sys.println("ERROR: getFloat[" + key + "]: getValue() returned null");
+                Sys.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned null");
             }
         } catch (e) {
-            Sys.println("ERROR: getFloat[" + key + "]: Exception while reading property:");
+            Sys.println("ERROR: getPercentAsFloat[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
-        Sys.println("DEBUG: getFloat[" + key + "]: returning default: " + default_value.format("%f"));
+        Sys.println("DEBUG: getPercentAsFloat[" + key + "]: returning default: " + default_value.format("%f"));
         return default_value;
     }
     
@@ -197,12 +218,11 @@ class SpotlightView extends WatchUi.WatchFace {
             // don't try to do anything before we have the screen's dimensions
             return;
         }
-        var fl as Float = 3.14f;
-        Sys.println("Number check: " + fl.format("%.2f"));
+        var fl1 as Float = Math.PI;
         if (Toybox.Application has :Properties) {
-            zoom_factor = getFloat("zoomFactor", zoom_factor);
-            focal_point = getFloat("focalPoint", focal_point);
-            text_position = getFloat("textPosition", text_position);
+            zoom_factor = getPercentAsFloat("zoomFactor", zoom_factor);
+            focal_point = getPercentAsFloat("focalPoint", focal_point);
+            text_position = getPercentAsFloat("textPosition", text_position);
             text_visible = getBoolean("textVisible", text_visible);
             text_visible_low_power = getBoolean("textVisibleLowPower", text_visible_low_power);
             text_font = getNumber("font", text_font);
@@ -221,11 +241,11 @@ class SpotlightView extends WatchUi.WatchFace {
             hour_line_color = getColor("hourLineColor", hour_line_color);
             hash_mark_low_power_color = getColor("hashMarkLowPowerColor", hash_mark_low_power_color);
             hour_line_low_power_color = getColor("hourLineLowPowerColor", hour_line_low_power_color);
-            mark_ll = getFloat("markLargeLength", mark_ll);
+            mark_ll = getPercentAsFloat("markLargeLength", mark_ll);
             mark_lw = getNumber("markLargeWidth", mark_lw);
-            mark_ml = getFloat("markMediumLength", mark_ml);
+            mark_ml = getPercentAsFloat("markMediumLength", mark_ml);
             mark_mw = getNumber("markMediumWidth", mark_mw);
-            mark_sl = getFloat("markSmallLength", mark_sl);
+            mark_sl = getPercentAsFloat("markSmallLength", mark_sl);
             mark_sw = getNumber("markSmallWidth", mark_sw);
         }
 

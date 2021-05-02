@@ -1,11 +1,11 @@
 <strings>
     <string id="AppName">Spotlight</string>
     <string id="zoomFactorTitle">Zoom factor</string>
-    <string id="zoomFactorPrompt">Hoeveel groter de virtuele klok moet zijn</string>
+    <string id="zoomFactorPrompt">Hoeveel groter de virtuele klok moet zijn in procent</string>
     <string id="focalPointTitle">Focus punt</string>
-    <string id="focalPointPrompt">Waar het midden van de spotlight gericht moet zijn. 0 is het midden van de klok, 1 is de rand van de klok.</string>
+    <string id="focalPointPrompt">Waar het midden van de spotlight gericht moet zijn. 0 is het midden van de klok, 100 is de rand van de klok.</string>
     <string id="textPositionTitle">Cijfer positie</string>
-    <string id="textPositionPrompt">Waar de cijfers staan. 0 is het midden van de klok, 1 is de rand van de klok.</string>
+    <string id="textPositionPrompt">Waar de cijfers staan. 0 is het midden van de klok, 100 is de rand van de klok.</string>
     <string id="textVisibleTitle">Cijfers zichtbaar</string>
     <string id="textVisiblePrompt">Of de cijfers zichtbaar zijn</string>
     <string id="textVisibleLowPowerTitle">Cijfers zichtbaar in spaarstand</string>
@@ -31,15 +31,15 @@
     <string id="hourLineLowPowerColorTitle">Wijzer streep kleur (spaarstand)</string>
     <string id="hourLineLowPowerColorPrompt">Kleur van de wijzer streep wanneer het horloge in spaarstand staat, in RRGGBB hexadecimale vorm. 000000 is zwart, FFFFFF is wit, 5F0000 is donker rood.</string>
     <string id="markLargeLengthTitle">Uur streepjes lengte</string>
-    <string id="markLargeLengthPrompt">Lengte is een getal met decimalen waarbij 1 overeenkomt met de diameter van de virtuele klok.</string>
+    <string id="markLargeLengthPrompt">Lengte is een percentage van de virtuele klok diameter.</string>
     <string id="markLargeWidthTitle">Uur streepjes breedte</string>
     <string id="markLargeWidthPrompt">Breedte is in pixels</string>
     <string id="markMediumLengthTitle">Half uur streepjes lengte</string>
-    <string id="markMediumLengthPrompt">Lengte is een getal met decimalen waarbij 1 overeenkomt met de diameter van de virtuele klok.</string>
+    <string id="markMediumLengthPrompt">Lengte is een percentage van de virtuele klok diameter.</string>
     <string id="markMediumWidthTitle">Half uur streepjes breedte</string>
     <string id="markMediumWidthPrompt">Breedte is in pixels</string>
     <string id="markSmallLengthTitle">10 minuten streepjes lengte</string>
-    <string id="markSmallLengthPrompt">Lengte is een getal met decimalen waarbij 1 overeenkomt met de diameter van de virtuele klok.</string>
+    <string id="markSmallLengthPrompt">Lengte is een percentage van de virtuele klok diameter.</string>
     <string id="markSmallWidthTitle">10 minuten streepjes breedte</string>
     <string id="markSmallWidthPrompt">Breedte is in pixels</string>
 </strings>
