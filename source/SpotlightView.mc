@@ -111,6 +111,7 @@ class SpotlightView extends WatchUi.WatchFace {
                     return value;
                 } else if (value instanceof String) {
                     Sys.println("DEBUG: getFloat[" + key + "]: string=\"" + value + "\"");
+                    return default_value;
                     var value_float = value.toFloat();
                     Sys.println("DEBUG: getFloat[" + key + "]: float=" + value.format("%f"));
                     return value.toFloat();
@@ -196,6 +197,8 @@ class SpotlightView extends WatchUi.WatchFace {
             // don't try to do anything before we have the screen's dimensions
             return;
         }
+        var fl as Float = 3.14f;
+        Sys.println("Number check: " + fl.format("%.2f"));
         if (Toybox.Application has :Properties) {
             zoom_factor = getFloat("zoomFactor", zoom_factor);
             focal_point = getFloat("focalPoint", focal_point);
