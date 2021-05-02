@@ -117,18 +117,6 @@ class SpotlightView extends WatchUi.WatchFace {
                     var value = (percent as Float) / 100f;
                     Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
                     return value;
-                } else if (percent instanceof Float) {
-                    // leaving this in just in case, for possible previous version's settings
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + percent.format("%f"));
-                    var percent_number as Number = Math.round(percent * 100).toNumber();
-                    try {
-                        Sys.println("DEBUG: getPercentAsFloat[" + key + "]: saving setting number=" + percent_number.format("%d"));
-                        Properties.setValue(key, percent_number);
-                    } catch (e) {
-                        Sys.println("ERROR: getPercentAsFloat[" + key + "]: Exception while writing property:");
-                        e.printStackTrace();
-                    }
-                    return percent;
                 } else if (percent instanceof String) {
                     Sys.println("DEBUG: getPercentAsFloat[" + key + "]: string=\"" + percent + "\"");
                     var percent_number = percent.toNumber();
@@ -220,9 +208,9 @@ class SpotlightView extends WatchUi.WatchFace {
         }
         var fl1 as Float = Math.PI;
         if (Toybox.Application has :Properties) {
-            zoom_factor = getPercentAsFloat("zoomFactor", zoom_factor);
-            focal_point = getPercentAsFloat("focalPoint", focal_point);
-            text_position = getPercentAsFloat("textPosition", text_position);
+            zoom_factor = getPercentAsFloat("zoomFactorP", zoom_factor);
+            focal_point = getPercentAsFloat("focalPointP", focal_point);
+            text_position = getPercentAsFloat("textPositionP", text_position);
             text_visible = getBoolean("textVisible", text_visible);
             text_visible_low_power = getBoolean("textVisibleLowPower", text_visible_low_power);
             text_font = getNumber("font", text_font);
@@ -241,11 +229,11 @@ class SpotlightView extends WatchUi.WatchFace {
             hour_line_color = getColor("hourLineColor", hour_line_color);
             hash_mark_low_power_color = getColor("hashMarkLowPowerColor", hash_mark_low_power_color);
             hour_line_low_power_color = getColor("hourLineLowPowerColor", hour_line_low_power_color);
-            mark_ll = getPercentAsFloat("markLargeLength", mark_ll);
+            mark_ll = getPercentAsFloat("markLargeLengthP", mark_ll);
             mark_lw = getNumber("markLargeWidth", mark_lw);
-            mark_ml = getPercentAsFloat("markMediumLength", mark_ml);
+            mark_ml = getPercentAsFloat("markMediumLengthP", mark_ml);
             mark_mw = getNumber("markMediumWidth", mark_mw);
-            mark_sl = getPercentAsFloat("markSmallLength", mark_sl);
+            mark_sl = getPercentAsFloat("markSmallLengthP", mark_sl);
             mark_sw = getNumber("markSmallWidth", mark_sw);
         }
 
