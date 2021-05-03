@@ -5,11 +5,11 @@
     <string id="notificationStyle0">None</string>
     <string id="notificationStyle1">Circle</string>
     <string id="notificationStyle2">Envelope</string>
-    <string id="zoomFactorTitle">Zoom factor</string>
+    <string id="zoomFactorTitle">Zoom factor (percentage)</string>
     <string id="zoomFactorPrompt">How much bigger the virtual clock should be in percent</string>
-    <string id="focalPointTitle">Focal point</string>
+    <string id="focalPointTitle">Focal point (percentage)</string>
     <string id="focalPointPrompt">Where the center of the spotlight should be. 0 is the center of the clock, 100 is the edge of the clock</string>
-    <string id="textPositionTitle">Numeral position</string>
+    <string id="textPositionTitle">Numeral position (percentage)</string>
     <string id="textPositionPrompt">Where numerals should be positioned. 0 is the center of the clock, 100 is the edge of the clock</string>
     <string id="textVisibleTitle">Numeral visibility</string>
     <string id="textVisiblePrompt">Whether or not to show the numbers for the hours</string>
@@ -55,16 +55,16 @@
     <string id="hashMarkLowPowerColorPrompt">Color of the hash marks when the watch is in low power mode, in RRGGBB hexadecimal form. 000000 is black, FFFFFF is white, 5F0000 is dark red.</string>
     <string id="hourLineLowPowerColorTitle">Low power hour line</string>
     <string id="hourLineLowPowerColorPrompt">Color of the hour line when the watch is in low power mode, in RRGGBB hexadecimal form. 000000 is black, FFFFFF is white, 5F0000 is dark red.</string>
-    <string id="markLargeLengthTitle">Hour mark length</string>
+    <string id="markLargeLengthTitle">Hour mark length (percentage)</string>
     <string id="markLargeLengthPrompt">Length is a percentage of the virtual clock diameter</string>
-    <string id="markLargeWidthTitle">Hour mark width</string>
+    <string id="markLargeWidthTitle">Hour mark width (pixels)</string>
     <string id="markLargeWidthPrompt">Width is in pixels</string>
-    <string id="markMediumLengthTitle">30 minute mark length</string>
+    <string id="markMediumLengthTitle">30 minute mark length (percentage)</string>
     <string id="markMediumLengthPrompt">Length is a percentage of the virtual clock diameter</string>
-    <string id="markMediumWidthTitle">30 minute mark width</string>
+    <string id="markMediumWidthTitle">30 minute mark width (pixels)</string>
     <string id="markMediumWidthPrompt">Width is in pixels</string>
-    <string id="markSmallLengthTitle">10 minute mark length</string>
+    <string id="markSmallLengthTitle">10 minute mark length (percentage)</string>
     <string id="markSmallLengthPrompt">Length is a percentage of the virtual clock diameter</string>
-    <string id="markSmallWidthTitle">10 minute mark width</string>
+    <string id="markSmallWidthTitle">10 minute mark width (pixels)</string>
     <string id="markSmallWidthPrompt">Width is in pixels</string>
 </strings>
