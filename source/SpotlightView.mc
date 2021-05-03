@@ -120,10 +120,10 @@ class SpotlightView extends WatchUi.WatchFace {
                 } else if (percent instanceof String) {
                     Sys.println("DEBUG: getPercentAsFloat[" + key + "]: string=\"" + percent + "\"");
                     var percent_number = percent.toNumber();
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent.format("%d"));
-                    var value = (percent as Float) / 100f;
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + percent.format("%f"));
-                    return percent.toFloat();
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent_number.format("%d"));
+                    var value = (percent_number as Float) / 100f;
+                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
+                    return value;
                 } else {
                     Sys.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned unexpected type");
                 }
