@@ -1,5 +1,10 @@
 <strings>
     <string id="AppName">Spotlight</string>
+    <string id="notificationStyleTitle">Notification icon</string>
+    <string id="notificationStylePrompt">What icon to show when there are notifications</string>
+    <string id="notificationStyle0">None</string>
+    <string id="notificationStyle1">Circle</string>
+    <string id="notificationStyle2">Envelope</string>
     <string id="zoomFactorTitle">Zoom factor</string>
     <string id="zoomFactorPrompt">How much bigger the virtual clock should be in percent</string>
     <string id="focalPointTitle">Focal point</string>

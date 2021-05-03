@@ -36,6 +36,19 @@ class SpotlightView extends WatchUi.WatchFace {
     var mark_mw as Number = 2;
     var mark_sl as Float = 0.025f;
     var mark_sw as Number = 1;
+    // Notification style
+    // 0 = None
+    // 1 = Circle
+    // 2 = Envelope
+    var notification_style as Number = 1;
+    var envelope_left_x as Number;
+    var envelope_right_x as Number;
+    var envelope_top_y as Number;
+    var envelope_bottom_y as Number;
+    var envelope_mid_tip_y as Number;
+    var envelope_mid_y as Number;
+    var envelope_mid_left_x as Number;
+    var envelope_mid_right_x as Number;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
     // that we're zooming in on.
@@ -235,6 +248,7 @@ class SpotlightView extends WatchUi.WatchFace {
             mark_mw = getNumber("markMediumWidth", mark_mw);
             mark_sl = getPercentAsFloat("markSmallLengthP", mark_sl);
             mark_sw = getNumber("markSmallWidth", mark_sw);
+            notification_style = getNumber("notificationStyle", notification_style);
         }
 
         clock_radius = screen_radius * zoom_factor;
@@ -329,6 +343,17 @@ class SpotlightView extends WatchUi.WatchFace {
                                 " cx=" + screen_center_x.format("%d") +
                                 " cy=" + screen_center_y.format("%d") +
                                 " radius=" + screen_radius.format("%f"));
+        // Use screen_height for Y, instead of screen_radius, because
+        // there are screens that are wider than they are high
+        envelope_left_x = screen_center_x - 10;
+        envelope_right_x = screen_center_x + 10;
+        envelope_top_y = screen_height - 22;
+        envelope_bottom_y = screen_height - 10;
+        envelope_mid_tip_y = screen_height - 12;
+        envelope_mid_y = screen_height - 16;
+        envelope_mid_left_x = screen_center_x - 4;
+        envelope_mid_right_x = screen_center_x + 4;
+
         have_screen_dimensions = true;
         setupData();
     }
@@ -374,6 +399,17 @@ class SpotlightView extends WatchUi.WatchFace {
         drawHashMarks(dc, time_angle);
 
         drawHourLine(dc, time_angle);
+
+        if (notification_style != 0) {
+            var device = Sys.getDeviceSettings();
+            if (device.notificationCount > 0) {
+                if (notification_style == 1) {
+                    drawNotificationCircle(dc);
+                } else {
+                    drawNotificationEnvelope(dc);
+                }
+            }
+        }
     }
 
     // Only for performance measuring. Don't need this during normal
@@ -468,6 +504,34 @@ class SpotlightView extends WatchUi.WatchFace {
             y2 = screen_center_y + 2 * screen_radius * Math.cos(angle) + 0.5f;
             dc.drawLine(x1, y1, x2, y2);
         }
+    }
+
+    // Draw the notification symbol
+    function drawNotificationCircle(dc) {
+        dc.setPenWidth(3);
+        if (low_power) {
+            dc.setColor(hash_mark_low_power_color);
+        } else {
+            dc.setColor(hash_mark_color, Gfx.COLOR_TRANSPARENT);
+        }
+        // Use screen_height for Y, because there's screens that are
+        // wider than they are high
+        dc.drawCircle(screen_center_x, screen_height - screen_height * 0.05f, screen_radius * 0.05f);
+    }
+
+    function drawNotificationEnvelope(dc) {
+        dc.setPenWidth(2);
+        if (low_power) {
+            dc.setColor(hash_mark_low_power_color, background_color);
+        } else {
+            dc.setColor(hash_mark_color, background_color);
+        }
+        dc.fillRectangle(envelope_left_x, envelope_top_y, 21, 13);
+        dc.setColor(background_color, background_color);
+        dc.drawLine(envelope_left_x, envelope_top_y, screen_center_x, envelope_mid_tip_y);
+        dc.drawLine(envelope_right_x, envelope_top_y, screen_center_x, envelope_mid_tip_y);
+        dc.drawLine(envelope_left_x, envelope_bottom_y, envelope_mid_left_x, envelope_mid_y);
+        dc.drawLine(envelope_right_x, envelope_bottom_y, envelope_mid_right_x, envelope_mid_y);
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.
