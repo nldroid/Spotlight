@@ -60,6 +60,7 @@ class SpotlightView extends WatchUi.WatchFace {
     var screen_width, screen_height;
     var screen_radius;
     var screen_center_x, screen_center_y;
+    var screen_burn_in_possible as Boolean = false;
     var have_screen_dimensions as Boolean = false;
     var clock_radius;
 
@@ -363,6 +364,12 @@ class SpotlightView extends WatchUi.WatchFace {
         battery_cap_x = screen_center_x - 9;
         battery_fill_x = screen_center_x + 6;
 
+        // screen_burn_in_possible defaults to false
+        var device = Sys.getDeviceSettings();
+        if (device has :requiresBurnInProtection) {
+            screen_burn_in_possible = device.requiresBurnInProtection;
+        }
+
         have_screen_dimensions = true;
         setupData();
     }
@@ -409,19 +416,24 @@ class SpotlightView extends WatchUi.WatchFace {
 
         drawHourLine(dc, time_angle);
 
-        if (notification_style != 0) {
-            var device = Sys.getDeviceSettings();
-            if (device.notificationCount > 0) {
-                if (notification_style == 1) {
-                    drawNotificationCircle(dc);
-                } else {
-                    drawNotificationEnvelope(dc);
+        // if this is an OLED watch and we're in low power,
+        // don't draw icons, because that will trigger the
+        // burn-in protection
+        if (!(low_power && screen_burn_in_possible)) {
+            if (notification_style != 0) {
+                var device = Sys.getDeviceSettings();
+                if (device.notificationCount > 0) {
+                    if (notification_style == 1) {
+                        drawNotificationCircle(dc);
+                    } else {
+                        drawNotificationEnvelope(dc);
+                    }
                 }
             }
-        }
 
-        if (Sys.getSystemStats().battery < battery_threshold) {
-            drawBatteryLow(dc);
+            if (Sys.getSystemStats().battery < battery_threshold) {
+                drawBatteryLow(dc);
+            }
         }
     }
 
@@ -492,12 +504,16 @@ class SpotlightView extends WatchUi.WatchFace {
         // Again, adding 0.5f to do implicit round instead of floor in
         // drawLine.
         if (low_power) {
+            dc.setColor(hour_line_low_power_color, Gfx.COLOR_TRANSPARENT);
+        } else {
+            dc.setColor(hour_line_color, Gfx.COLOR_TRANSPARENT);
+        }
+        if (low_power && screen_burn_in_possible) {
             // For burn-in protection on OLED screens, don't draw the hour
             // line at the center of the screen. Instead we do two thinner
             // lines near the edges of the screen. This close to the center,
             // a width of 2 actually triggered detection at the tip.
             dc.setPenWidth(1);
-            dc.setColor(hour_line_low_power_color, background_color);
             x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
             y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
             x2 = screen_center_x + 0.5 * screen_radius * Math.sin(angle) + 0.5f;
@@ -510,7 +526,6 @@ class SpotlightView extends WatchUi.WatchFace {
             dc.drawLine(x1, y1, x2, y2);
         } else {
             dc.setPenWidth(2);
-            dc.setColor(hour_line_color, background_color);
             x1 = screen_center_x + 2 * screen_radius * Math.sin(angle) + 0.5f;
             y1 = screen_center_y - 2 * screen_radius * Math.cos(angle) + 0.5f;
             x2 = screen_center_x - 2 * screen_radius * Math.sin(angle) + 0.5f;
