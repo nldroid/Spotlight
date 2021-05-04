@@ -5,6 +5,8 @@
     <string id="notificationStyle0">None</string>
     <string id="notificationStyle1">Circle</string>
     <string id="notificationStyle2">Envelope</string>
+    <string id="batteryThresholdTitle">Low battery warning (percentage)</string>
+    <string id="batteryThresholdPrompt">Under what charge level to show a low battery warning</string>
     <string id="zoomFactorTitle">Zoom factor (percentage)</string>
     <string id="zoomFactorPrompt">How much bigger the virtual clock should be in percent</string>
     <string id="focalPointTitle">Focal point (percentage)</string>

@@ -49,6 +49,11 @@ class SpotlightView extends WatchUi.WatchFace {
     var envelope_mid_y as Number;
     var envelope_mid_left_x as Number;
     var envelope_mid_right_x as Number;
+    // At what charge level to show low battery icon
+    var battery_threshold as Number = 20;
+    var battery_body_x as Number;
+    var battery_cap_x as Number;
+    var battery_fill_x as Number;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
     // that we're zooming in on.
@@ -249,6 +254,7 @@ class SpotlightView extends WatchUi.WatchFace {
             mark_sl = getPercentAsFloat("markSmallLengthP", mark_sl);
             mark_sw = getNumber("markSmallWidth", mark_sw);
             notification_style = getNumber("notificationStyle", notification_style);
+            battery_threshold = getNumber("batteryThreshold", battery_threshold);
         }
 
         clock_radius = screen_radius * zoom_factor;
@@ -353,6 +359,9 @@ class SpotlightView extends WatchUi.WatchFace {
         envelope_mid_y = screen_height - 16;
         envelope_mid_left_x = screen_center_x - 4;
         envelope_mid_right_x = screen_center_x + 4;
+        battery_body_x = screen_center_x - 7;
+        battery_cap_x = screen_center_x - 9;
+        battery_fill_x = screen_center_x + 6;
 
         have_screen_dimensions = true;
         setupData();
@@ -409,6 +418,10 @@ class SpotlightView extends WatchUi.WatchFace {
                     drawNotificationEnvelope(dc);
                 }
             }
+        }
+
+        if (Sys.getSystemStats().battery < battery_threshold) {
+            drawBatteryLow(dc);
         }
     }
 
@@ -527,11 +540,27 @@ class SpotlightView extends WatchUi.WatchFace {
             dc.setColor(hash_mark_color, background_color);
         }
         dc.fillRectangle(envelope_left_x, envelope_top_y, 21, 13);
-        dc.setColor(background_color, background_color);
+        if (low_power) {
+            dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_BLACK);
+        } else {
+            dc.setColor(background_color, background_color);
+        }
         dc.drawLine(envelope_left_x, envelope_top_y, screen_center_x, envelope_mid_tip_y);
         dc.drawLine(envelope_right_x, envelope_top_y, screen_center_x, envelope_mid_tip_y);
         dc.drawLine(envelope_left_x, envelope_bottom_y, envelope_mid_left_x, envelope_mid_y);
         dc.drawLine(envelope_right_x, envelope_bottom_y, envelope_mid_right_x, envelope_mid_y);
+    }
+
+    function drawBatteryLow(dc) {
+        dc.setPenWidth(2);
+        if (low_power) {
+            dc.setColor(hash_mark_low_power_color, background_color);
+        } else {
+            dc.setColor(hash_mark_color, background_color);
+        }
+        dc.drawRectangle(battery_body_x, 10, 17, 11);
+        dc.drawRectangle(battery_cap_x, 13, 1, 5);
+        dc.drawRectangle(battery_fill_x, 13, 1, 5);
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.

@@ -5,6 +5,8 @@
     <string id="notificationStyle0">Geen</string>
     <string id="notificationStyle1">Cirkel</string>
     <string id="notificationStyle2">Envelop</string>
+    <string id="batteryThresholdTitle">Lege batterij waarschuwing (percentage)</string>
+    <string id="batteryThresholdPrompt">Onder welk percentage een lege batterij waarschuwing getoond moet worden</string>
     <string id="zoomFactorTitle">Zoom factor (percentage)</string>
     <string id="zoomFactorPrompt">Hoeveel groter de virtuele klok moet zijn in procent</string>
     <string id="focalPointTitle">Focus punt (percentage)</string>

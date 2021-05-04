@@ -5,6 +5,7 @@
              settings don't get misinterpreted and go back to default
         -->
         <property id="notificationStyle" type="number">1</property>
+        <property id="batteryThreshold" type="number">20</property>
     	<property id="zoomFactorP" type="number">210</property>
     	<property id="focalPointP" type="number">80</property>
     	<property id="textPositionP" type="number">80</property>
@@ -34,6 +35,9 @@
                 <listEntry value="1">@Strings.notificationStyle1</listEntry>
                 <listEntry value="2">@Strings.notificationStyle2</listEntry>
             </settingConfig>
+		</setting>
+        <setting propertyKey="@Properties.batteryThreshold" title="@Strings.batteryThresholdTitle" prompt="@Strings.batteryThresholdPrompt">
+            <settingConfig type="numeric" min="0" max ="100" />
 		</setting>
         <setting propertyKey="@Properties.zoomFactorP" title="@Strings.zoomFactorTitle" prompt="@Strings.zoomFactorPrompt">
             <settingConfig type="numeric" min="200" max ="400" />
