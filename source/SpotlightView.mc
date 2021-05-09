@@ -595,13 +595,10 @@ class SpotlightView extends WatchUi.WatchFace {
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-    	//Sys.println("Ignore low lower mode: " + ignore_low_power_mode);
     	if (ignore_low_power_mode) {
     		low_power = false;
-	    //    Sys.println("Low lower mode (ignored): " + low_power);
     	} else {	
         	low_power = true;
-	    //    Sys.println("Low lower mode (not ignored): " + low_power);
         }
     }
 
