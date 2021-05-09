@@ -65,8 +65,8 @@ class SpotlightView extends WatchUi.WatchFace {
     var have_screen_dimensions as Boolean = false;
     var clock_radius;
 
-	// // Whether or not we're in sleep mode
-	var in_sleep_mode = false;
+    // Whether or not we're in sleep mode
+    var in_sleep_mode = false;
     // Whether or not we're in low-power mode
     var low_power as Boolean = false;
     // Whether or not we're hidden. No need to draw if we are.
