@@ -10,6 +10,7 @@ class SpotlightView extends WatchUi.WatchFace {
     var background_color as Number = Gfx.COLOR_BLACK;
     var hash_mark_color = Gfx.COLOR_WHITE;
     var hour_line_color = Gfx.COLOR_RED;
+    var background_low_power_color as Number = Gfx.COLOR_BLACK;
     var hash_mark_low_power_color = Gfx.COLOR_DK_GRAY;
     var hour_line_low_power_color = Gfx.COLOR_DK_RED;
     // Starting with a clock exactly the size of the face, how many
@@ -68,6 +69,8 @@ class SpotlightView extends WatchUi.WatchFace {
     var low_power as Boolean = false;
     // Whether or not we're hidden. No need to draw if we are.
     var face_hidden as Boolean = false;
+    // Wether or not we should ignore low power mode. This can be handy for non oled screens.
+    var ignore_low_power_mode as Boolean = false;
 
     // Instead of an Array of Objects, separate Arrays, because older watches
     // can't handle lots of Objects
@@ -256,7 +259,15 @@ class SpotlightView extends WatchUi.WatchFace {
             mark_sw = getNumber("markSmallWidth", mark_sw);
             notification_style = getNumber("notificationStyle", notification_style);
             battery_threshold = getNumber("batteryThreshold", battery_threshold);
-        }
+            if (!screen_burn_in_possible) {
+            	background_low_power_color = getColor("backgroundLowPowerColor", background_low_power_color);
+            	ignore_low_power_mode = getBoolean("ignoreLowPowerMode", ignore_low_power_mode);
+            }	
+        } else {
+        	// use screen burn in possible for old (api < 2.4.0) devices becasuse they cannot 
+        	// use the settings to enable it. Burn in shouldn't be an issue on old devices.
+        	ignore_low_power_mode = !screen_burn_in_possible; 
+        }	
 
         clock_radius = screen_radius * zoom_factor;
 
@@ -403,10 +414,9 @@ class SpotlightView extends WatchUi.WatchFace {
         if(dc has :setAntiAlias) {
             dc.setAntiAlias(true);
         }
-        // Clear the screen with background color. To keep people from
-        // being stupid, always use black in lower power mode.
+        // Clear the screen with background color.
         if (low_power) {
-            dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_BLACK);
+            dc.setColor(background_low_power_color, background_low_power_color);
         } else {
             dc.setColor(background_color, background_color);
         }
@@ -538,7 +548,7 @@ class SpotlightView extends WatchUi.WatchFace {
     function drawNotificationCircle(dc) {
         dc.setPenWidth(3);
         if (low_power) {
-            dc.setColor(hash_mark_low_power_color);
+            dc.setColor(hash_mark_low_power_color, Gfx.COLOR_TRANSPARENT);
         } else {
             dc.setColor(hash_mark_color, Gfx.COLOR_TRANSPARENT);
         }
@@ -550,13 +560,13 @@ class SpotlightView extends WatchUi.WatchFace {
     function drawNotificationEnvelope(dc) {
         dc.setPenWidth(2);
         if (low_power) {
-            dc.setColor(hash_mark_low_power_color, background_color);
+            dc.setColor(hash_mark_low_power_color, background_low_power_color);
         } else {
             dc.setColor(hash_mark_color, background_color);
         }
         dc.fillRectangle(envelope_left_x, envelope_top_y, 21, 13);
         if (low_power) {
-            dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_BLACK);
+            dc.setColor(background_low_power_color, background_low_power_color);
         } else {
             dc.setColor(background_color, background_color);
         }
@@ -569,7 +579,7 @@ class SpotlightView extends WatchUi.WatchFace {
     function drawBatteryLow(dc) {
         dc.setPenWidth(2);
         if (low_power) {
-            dc.setColor(hash_mark_low_power_color, background_color);
+            dc.setColor(hash_mark_low_power_color, background_low_power_color);
         } else {
             dc.setColor(hash_mark_color, background_color);
         }
@@ -585,7 +595,14 @@ class SpotlightView extends WatchUi.WatchFace {
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-        low_power = true;
+    	//Sys.println("Ignore low lower mode: " + ignore_low_power_mode);
+    	if (ignore_low_power_mode) {
+    		low_power = false;
+	    //    Sys.println("Low lower mode (ignored): " + low_power);
+    	} else {	
+        	low_power = true;
+	    //    Sys.println("Low lower mode (not ignored): " + low_power);
+        }
     }
 
 }

@@ -17,7 +17,9 @@
         <property id="backgroundColor" type="string">000000</property>
         <property id="hashMarkColor" type="string">FFFFFF</property>
         <property id="hourLineColor" type="string">FF0000</property>
+		<property id="ignoreLowPowerMode" type="boolean">false</property>
         <property id="fontLowPowerColor" type="string">606060</property>
+		<property id="backgroundLowPowerColor" type="string">000000</property>
         <property id="hashMarkLowPowerColor" type="string">707070</property>
         <property id="hourLineLowPowerColor" type="string">AA0000</property>
     	<property id="markLargeLengthP" type="number">10</property>
@@ -96,7 +98,13 @@
         <setting propertyKey="@Properties.hourLineColor" title="@Strings.hourLineColorTitle" prompt="@Strings.hourLineColorPrompt">
             <settingConfig type="alphaNumeric" />
 		</setting>
+        <setting propertyKey="@Properties.ignoreLowPowerMode" title="@Strings.ignoreLowPowerModeTitle" prompt="@Strings.ignoreLowPowerModePrompt">
+            <settingConfig type="boolean" />
+		</setting>
         <setting propertyKey="@Properties.fontLowPowerColor" title="@Strings.numeralsLowPowerColorTitle" prompt="@Strings.numeralsLowPowerColorPrompt">
+            <settingConfig type="alphaNumeric" />
+		</setting>
+        <setting propertyKey="@Properties.backgroundLowPowerColor" title="@Strings.backgroundLowPowerColorTitle" prompt="@Strings.backgroundLowPowerColorPrompt">
             <settingConfig type="alphaNumeric" />
 		</setting>
         <setting propertyKey="@Properties.hashMarkLowPowerColor" title="@Strings.hashMarkLowPowerColorTitle" prompt="@Strings.hashMarkLowPowerColorPrompt">

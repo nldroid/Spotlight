@@ -50,6 +50,8 @@
     <string id="numeralsColorPrompt">Kleur van de cijfers, in RRGGBB hexadecimale vorm. 000000 is zwart, FFFFFF is wit, 5F0000 is donker rood.</string>
     <string id="backgroundColorTitle">Achtergrond kleur</string>
     <string id="backgroundColorPrompt">Kleur van de wijzerplaat, in RRGGBB hexadecimale vorm. Gebruik geen lichte kleuren op een OLED horloge, het kan de burn-in bescherming activeren en vreet batterij. 000000 is zwart, FFFFFF is wit, 5F0000 is donker rood.</string>
+    <string id="backgroundLowPowerColorTitle">Achtergrond kleur in spaarstand (niet actief op OLED horloges)</string>
+    <string id="backgroundLowPowerColorPrompt">Kleur van de wijzerplaat in spaarstand, in RRGGBB hexadecimale vorm. Deze optie is niet beschikbaar op OLED horloges. 000000 is zwart, FFFFFF is wit, 5F0000 is donker rood.</string>
     <string id="hashMarkColorTitle">Streepjes kleur</string>
     <string id="hashMarkColorPrompt">Kleur van de streepjes aan de rand van de wijzerplaat, in RRGGBB hexadecimale vorm. 000000 is zwart, FFFFFF is wit, 5F0000 is donker rood.</string>
     <string id="hourLineColorTitle">Wijzer streep kleur</string>
@@ -72,4 +74,6 @@
     <string id="markSmallLengthPrompt">Lengte is een percentage van de virtuele klok diameter.</string>
     <string id="markSmallWidthTitle">10 minuten streepjes breedte (pixels)</string>
     <string id="markSmallWidthPrompt">Breedte is in pixels</string>
+	<string id="ignoreLowPowerModeTitle">Negeer spaarstand modus (niet actief op OLED horloges)</string>
+	<string id="ignoreLowPowerModePrompt">Negeer spaarstand modus en gebruik de instellingen voor de normale modus. Deze optie is niet actief op OLED horloges.</string>
 </strings>
