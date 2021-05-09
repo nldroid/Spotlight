@@ -65,6 +65,8 @@ class SpotlightView extends WatchUi.WatchFace {
     var have_screen_dimensions as Boolean = false;
     var clock_radius;
 
+	// // Whether or not we're in sleep mode
+	var in_sleep_mode = false;
     // Whether or not we're in low-power mode
     var low_power as Boolean = false;
     // Whether or not we're hidden. No need to draw if we are.
@@ -414,6 +416,9 @@ class SpotlightView extends WatchUi.WatchFace {
         if(dc has :setAntiAlias) {
             dc.setAntiAlias(true);
         }
+        // Set low power mode depending on sleep mode and ignore setting 
+        low_power = in_sleep_mode and !ignore_low_power_mode;
+        
         // Clear the screen with background color.
         if (low_power) {
             dc.setColor(background_low_power_color, background_low_power_color);
@@ -590,16 +595,12 @@ class SpotlightView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
-        low_power = false;
+        in_sleep_mode = false;
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-    	if (ignore_low_power_mode) {
-    		low_power = false;
-    	} else {	
-        	low_power = true;
-        }
+    	in_sleep_mode = true;
     }
 
 }
