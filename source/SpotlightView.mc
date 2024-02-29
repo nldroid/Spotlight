@@ -190,7 +190,7 @@ class SpotlightView extends WatchUi.WatchFace {
     
     function getBoolean(key, default_value as Boolean) as Boolean {
         try {
-            var value as Boolean or Null = Properties.getValue(key);
+            var value = Properties.getValue(key);
             if (value != null) {
                 if (value instanceof Boolean) {
                     Sys.println("DEBUG: getBoolean[" + key + "]: boolean=" + (value ? "true" : "false"));
@@ -230,7 +230,7 @@ class SpotlightView extends WatchUi.WatchFace {
             // don't try to do anything before we have the screen's dimensions
             return;
         }
-        var fl1 as Float = Math.PI;
+        var fl1 = Math.PI;
         if (Toybox.Application has :Properties) {
             zoom_factor = getPercentAsFloat("zoomFactorP", zoom_factor);
             focal_point = getPercentAsFloat("focalPointP", focal_point);
@@ -275,13 +275,13 @@ class SpotlightView extends WatchUi.WatchFace {
 
         // pre-calculate as much as we can using static parameters
         for(var i = 0; i < NUM_HASH_MARKS; i += 1) {
-            var angle as Float = ((i as Float) / 72.0f) * 2 * Math.PI;
-            var length as Float;
+            var angle = ((i as Float) / 72.0f) * 2 * Math.PI;
+            var length;
             if (i % 6 == 0) {
                 // Hour hashes are the longest
                 length = mark_ll;
                 hash_marks_width[i] = mark_lw;
-                var hour as Number = i / 6;
+                var hour = i / 6;
                 if (hour == 0) {
                     hour = 12;
                 }
@@ -469,14 +469,14 @@ class SpotlightView extends WatchUi.WatchFace {
         // This is much much faster than using Math.round(), which
         // isn't available on older platforms. We're only dealing
         // with positive X/Y values, so this works nicely.
-        var clock_center_x as Float = screen_center_x - focal_point * clock_radius * Math.sin(angle) + 0.5f;
-        var clock_center_y as Float = screen_center_y + focal_point * clock_radius * Math.cos(angle) + 0.5f;
+        var clock_center_x = screen_center_x - focal_point * clock_radius * Math.sin(angle) + 0.5f;
+        var clock_center_y = screen_center_y + focal_point * clock_radius * Math.cos(angle) + 0.5f;
         var index_guess = (72.0f * angle / (2 * Math.PI)).toNumber();
         var dist;
         // Determine what colors and visibility to use outside of the loop
-        var m_color as Number;
-        var t_visible as Boolean;
-        var t_color as Number;
+        var m_color;
+        var t_visible;
+        var t_color;
         if (low_power) {
             m_color = hash_mark_low_power_color;
             t_visible = text_visible_low_power;
@@ -514,7 +514,7 @@ class SpotlightView extends WatchUi.WatchFace {
     }
 
     function drawHourLine(dc, angle) {
-        var x1, y1, x2, y2 as Number;
+        var x1, y1, x2, y2;
         // 2 * radius so that we definitely overshoot, for square screens
         // Again, adding 0.5f to do implicit round instead of floor in
         // drawLine.
