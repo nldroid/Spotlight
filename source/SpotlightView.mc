@@ -78,7 +78,7 @@ class SpotlightView extends WatchUi.WatchFace {
     // can't handle lots of Objects
     const NUM_HASH_MARKS = 72;
     var hash_marks_angle as Array<Float> = new Float[NUM_HASH_MARKS]; // Angle in rad
-    var hash_marks_width as Array<Number> = new Float[NUM_HASH_MARKS]; // Width of mark in pixels
+    var hash_marks_width as Array<Float> = new Float[NUM_HASH_MARKS]; // Width of mark in pixels
     var hash_marks_clock_xo as Array<Float> = new Float[NUM_HASH_MARKS]; // Outside X coordinate of mark
     // Clock coordinates in -1.0 to +1.0 range
     var hash_marks_clock_yo as Array<Float> = new Float[NUM_HASH_MARKS]; // Outside Y coordinate of mark
@@ -172,8 +172,8 @@ class SpotlightView extends WatchUi.WatchFace {
                 } else if (value instanceof String) {
                     System.println("DEBUG: getNumber[" + key + "]: string=\"" + value + "\"");
                     var value_float = value.toNumber();
-                    System.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
-                    return value.toNumber();
+                    System.println("DEBUG: getNumber[" + key + "]: float=" + value_float.format("%d"));
+                    return value_float;
                 } else {
                     System.println("ERROR: getNumber[" + key + "]: getValue() returned unexpected type");
                 }
@@ -280,7 +280,7 @@ class SpotlightView extends WatchUi.WatchFace {
             if (i % 6 == 0) {
                 // Hour hashes are the longest
                 length = mark_ll;
-                hash_marks_width[i] = mark_lw;
+                hash_marks_width[i] = mark_lw.toFloat();
                 var hour = i / 6;
                 if (hour == 0) {
                     hour = 12;
@@ -331,11 +331,11 @@ class SpotlightView extends WatchUi.WatchFace {
                 if (i % 3 == 0) {
                     // Half hour ticks
                     length = mark_ml;
-                    hash_marks_width[i] = mark_mw;
+                    hash_marks_width[i] = mark_mw.toFloat();
                 } else {
                     // 10 minute ticks
                     length = mark_sl;
-                    hash_marks_width[i] = mark_sw;
+                    hash_marks_width[i] = mark_sw.toFloat();
                 }
                 hash_marks_label[i] = "";
             }
