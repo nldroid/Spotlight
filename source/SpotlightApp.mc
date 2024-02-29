@@ -2,7 +2,7 @@ using Toybox.Application;
 
 class SpotlightApp extends Application.AppBase {
 
-    var spotlight_view as SpotlightView;
+    var spotlight_view as SpotlightView or Null;
 
     function initialize() {
         AppBase.initialize();

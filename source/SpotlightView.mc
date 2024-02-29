@@ -42,19 +42,19 @@ class SpotlightView extends WatchUi.WatchFace {
     // 1 = Circle
     // 2 = Envelope
     var notification_style as Number = 1;
-    var envelope_left_x as Number;
-    var envelope_right_x as Number;
-    var envelope_top_y as Number;
-    var envelope_bottom_y as Number;
-    var envelope_mid_tip_y as Number;
-    var envelope_mid_y as Number;
-    var envelope_mid_left_x as Number;
-    var envelope_mid_right_x as Number;
+    var envelope_left_x as Number = 0;
+    var envelope_right_x as Number = 0;
+    var envelope_top_y as Number = 0;
+    var envelope_bottom_y as Number = 0;
+    var envelope_mid_tip_y as Number = 0;
+    var envelope_mid_y as Number = 0;
+    var envelope_mid_left_x as Number = 0;
+    var envelope_mid_right_x as Number = 0;
     // At what charge level to show low battery icon
     var battery_threshold as Number = 20;
-    var battery_body_x as Number;
-    var battery_cap_x as Number;
-    var battery_fill_x as Number;
+    var battery_body_x as Number = 0;
+    var battery_cap_x as Number = 0;
+    var battery_fill_x as Number = 0;
 
     // Screen refers to the actual display, Clock refers to the virtual clock
     // that we're zooming in on.
