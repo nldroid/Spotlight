@@ -1,18 +1,18 @@
-using Toybox.WatchUi;
-using Toybox.Graphics as Gfx;
-using Toybox.Lang;
-using Toybox.System as Sys;
-using Toybox.Application.Properties;
-using Toybox.Math;
+import Toybox.WatchUi;
+import Toybox.Graphics;
+import Toybox.Lang;
+import Toybox.System;
+import Toybox.Application.Properties;
+import Toybox.Math;
 
 class SpotlightView extends WatchUi.WatchFace {
 
-    var background_color as Number = Gfx.COLOR_BLACK;
-    var hash_mark_color = Gfx.COLOR_WHITE;
-    var hour_line_color = Gfx.COLOR_RED;
-    var background_low_power_color as Number = Gfx.COLOR_BLACK;
-    var hash_mark_low_power_color = Gfx.COLOR_DK_GRAY;
-    var hour_line_low_power_color = Gfx.COLOR_DK_RED;
+    var background_color as Number = Graphics.COLOR_BLACK;
+    var hash_mark_color = Graphics.COLOR_WHITE;
+    var hour_line_color = Graphics.COLOR_RED;
+    var background_low_power_color as Number = Graphics.COLOR_BLACK;
+    var hash_mark_low_power_color = Graphics.COLOR_DK_GRAY;
+    var hour_line_low_power_color = Graphics.COLOR_DK_RED;
     // Starting with a clock exactly the size of the face, how many
     // times to zoom in.
     var zoom_factor as Float = 2.1f;
@@ -24,9 +24,9 @@ class SpotlightView extends WatchUi.WatchFace {
     var text_position as Float = 0.8f;
     var text_visible as Boolean = true;
     var text_visible_low_power as Boolean = false;
-    var text_font = Gfx.FONT_SMALL;
-    var text_color as Number = Gfx.COLOR_WHITE;
-    var text_low_power_color as Number = Gfx.COLOR_DK_GRAY;
+    var text_font = Graphics.FONT_SMALL;
+    var text_color as Number = Graphics.COLOR_WHITE;
+    var text_low_power_color as Number = Graphics.COLOR_DK_GRAY;
     var roman_numerals as Boolean = false;
     // Hash mark sizes:
     // l = hour, m = 30 min, s = 10 min
@@ -102,26 +102,26 @@ class SpotlightView extends WatchUi.WatchFace {
             if (color != null && color instanceof String) {
                 // We expect the string to be exact 6 long (FFFFFF)
                 if (color.length() == 6) {
-                    Sys.println("DEBUG: getColor[" + key + "]: string=\"" + color + "\"");
+                    System.println("DEBUG: getColor[" + key + "]: string=\"" + color + "\"");
                     var color_number = color.toNumberWithBase(16);
-                    Sys.println("DEBUG: getColor[" + key + "]: number=" + color_number.format("%x"));
+                    System.println("DEBUG: getColor[" + key + "]: number=" + color_number.format("%x"));
                     return color_number;
                 } else {
-                    Sys.println("ERROR: getColor[" + key + "]: length=" + color.length() + " value=\"" + color + "\"");
+                    System.println("ERROR: getColor[" + key + "]: length=" + color.length() + " value=\"" + color + "\"");
                 }   	
             } else {
                 if (color == null) {
-                    Sys.println("ERROR: getColor[" + key + "]: getValue() returned null");
+                    System.println("ERROR: getColor[" + key + "]: getValue() returned null");
                 }
                 if (!color instanceof String) {
-                    Sys.println("ERROR: getColor[" + key + "]: getValue() returned something other than a String");
+                    System.println("ERROR: getColor[" + key + "]: getValue() returned something other than a String");
                 }
             }
         } catch (e) {
-            Sys.println("ERROR: getColor[" + key + "]: Exception while reading property:");
+            System.println("ERROR: getColor[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
-        Sys.println("DEBUG: getColor[" + key + "]: returning default: " + default_color.format("%x"));
+        System.println("DEBUG: getColor[" + key + "]: returning default: " + default_color.format("%x"));
         return default_color;
     }
 
@@ -137,28 +137,28 @@ class SpotlightView extends WatchUi.WatchFace {
             var percent = Properties.getValue(key);
             if (percent != null) {
                 if (percent instanceof Number) {
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent.format("%d"));
+                    System.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent.format("%d"));
                     var value = (percent as Float) / 100f;
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
+                    System.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
                     return value;
                 } else if (percent instanceof String) {
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: string=\"" + percent + "\"");
+                    System.println("DEBUG: getPercentAsFloat[" + key + "]: string=\"" + percent + "\"");
                     var percent_number = percent.toNumber();
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent_number.format("%d"));
+                    System.println("DEBUG: getPercentAsFloat[" + key + "]: number=" + percent_number.format("%d"));
                     var value = (percent_number as Float) / 100f;
-                    Sys.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
+                    System.println("DEBUG: getPercentAsFloat[" + key + "]: float=" + value.format("%f"));
                     return value;
                 } else {
-                    Sys.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned unexpected type");
+                    System.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned unexpected type");
                 }
             } else {
-                Sys.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned null");
+                System.println("ERROR: getPercentAsFloat[" + key + "]: getValue() returned null");
             }
         } catch (e) {
-            Sys.println("ERROR: getPercentAsFloat[" + key + "]: Exception while reading property:");
+            System.println("ERROR: getPercentAsFloat[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
-        Sys.println("DEBUG: getPercentAsFloat[" + key + "]: returning default: " + default_value.format("%f"));
+        System.println("DEBUG: getPercentAsFloat[" + key + "]: returning default: " + default_value.format("%f"));
         return default_value;
     }
     
@@ -167,24 +167,24 @@ class SpotlightView extends WatchUi.WatchFace {
             var value = Properties.getValue(key);
             if (value != null) {
                 if (value instanceof Number) {
-                    Sys.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
+                    System.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
                     return value;
                 } else if (value instanceof String) {
-                    Sys.println("DEBUG: getNumber[" + key + "]: string=\"" + value + "\"");
+                    System.println("DEBUG: getNumber[" + key + "]: string=\"" + value + "\"");
                     var value_float = value.toNumber();
-                    Sys.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
+                    System.println("DEBUG: getNumber[" + key + "]: float=" + value.format("%d"));
                     return value.toNumber();
                 } else {
-                    Sys.println("ERROR: getNumber[" + key + "]: getValue() returned unexpected type");
+                    System.println("ERROR: getNumber[" + key + "]: getValue() returned unexpected type");
                 }
             } else {
-                Sys.println("ERROR: getNumber[" + key + "]: getValue() returned null");
+                System.println("ERROR: getNumber[" + key + "]: getValue() returned null");
             }
         } catch (e) {
-            Sys.println("DEBUG: getNumber[" + key + "]: Exception while reading property:");
+            System.println("DEBUG: getNumber[" + key + "]: Exception while reading property:");
             e.printStackTrace();
         }
-        Sys.println("DEBUG: getNumber[" + key + "]: returning default: " + default_value.format("%d"));
+        System.println("DEBUG: getNumber[" + key + "]: returning default: " + default_value.format("%d"));
         return default_value;
     }
     
@@ -193,30 +193,30 @@ class SpotlightView extends WatchUi.WatchFace {
             var value = Properties.getValue(key);
             if (value != null) {
                 if (value instanceof Boolean) {
-                    Sys.println("DEBUG: getBoolean[" + key + "]: boolean=" + (value ? "true" : "false"));
+                    System.println("DEBUG: getBoolean[" + key + "]: boolean=" + (value ? "true" : "false"));
                     return value;
                 } else if (value instanceof String) {
-                    Sys.println("DEBUG: getBoolean[" + key + "]: string=\"" + value + "\"");
+                    System.println("DEBUG: getBoolean[" + key + "]: string=\"" + value + "\"");
                     if (value.toLower() == "true") {
-                        Sys.println("DEBUG: getBoolean[" + key + "]: boolean=true");
+                        System.println("DEBUG: getBoolean[" + key + "]: boolean=true");
                         return true;
                     } else if (value.toLower() == "false") {
-                        Sys.println("DEBUG: getBoolean[" + key + "]: boolean=false");
+                        System.println("DEBUG: getBoolean[" + key + "]: boolean=false");
                         return false;
                     } else {
                         return default_value;
                     }
                 } else {
-                    Sys.println("ERROR: getBoolean[" + key + "]: getValue() returned unexpected type");
+                    System.println("ERROR: getBoolean[" + key + "]: getValue() returned unexpected type");
                 }
             } else {
-                Sys.println("ERROR: getBoolean[" + key + "]: getValue() returned null");
+                System.println("ERROR: getBoolean[" + key + "]: getValue() returned null");
             }
         } catch (e) {
-            Sys.println("ERROR: Exception while reading property \"" + key + "\":");
+            System.println("ERROR: Exception while reading property \"" + key + "\":");
             e.printStackTrace();
         }
-        Sys.println("DEBUG: getBoolean[" + key + "]: returning default: " + (default_value ? "true" : "false"));
+        System.println("DEBUG: getBoolean[" + key + "]: returning default: " + (default_value ? "true" : "false"));
         return default_value;
     }
 
@@ -358,7 +358,7 @@ class SpotlightView extends WatchUi.WatchFace {
         // -1 seems to line up better in the simulator
         screen_center_x = screen_width / 2 - 1;
         screen_center_y = screen_height / 2 - 1;
-        Sys.println("DEBUG: screen w=" + screen_width.format("%d") +
+        System.println("DEBUG: screen w=" + screen_width.format("%d") +
                                 " h=" + screen_height.format("%d") +
                                 " cx=" + screen_center_x.format("%d") +
                                 " cy=" + screen_center_y.format("%d") +
@@ -378,7 +378,7 @@ class SpotlightView extends WatchUi.WatchFace {
         battery_fill_x = screen_center_x + 6;
 
         // screen_burn_in_possible defaults to false
-        var device = Sys.getDeviceSettings();
+        var device = System.getDeviceSettings();
         if (device has :requiresBurnInProtection) {
             screen_burn_in_possible = device.requiresBurnInProtection;
         }
@@ -406,7 +406,7 @@ class SpotlightView extends WatchUi.WatchFace {
         if (face_hidden) {
             return;
         }
-        var clockTime = Sys.getClockTime();
+        var clockTime = System.getClockTime();
         // calculate angle for hour hand for the current time
         var time_seconds = ((((clockTime.hour % 12) * 60) + clockTime.min) * 60) + clockTime.sec;
         var time_angle = Math.PI * 2 * time_seconds / (12 * 60 * 60);
@@ -436,7 +436,7 @@ class SpotlightView extends WatchUi.WatchFace {
         // burn-in protection
         if (!(low_power && screen_burn_in_possible)) {
             if (notification_style != 0) {
-                var device = Sys.getDeviceSettings();
+                var device = System.getDeviceSettings();
                 if (device.notificationCount > 0) {
                     if (notification_style == 1) {
                         drawNotificationCircle(dc);
@@ -446,7 +446,7 @@ class SpotlightView extends WatchUi.WatchFace {
                 }
             }
 
-            if (Sys.getSystemStats().battery < battery_threshold) {
+            if (System.getSystemStats().battery < battery_threshold) {
                 drawBatteryLow(dc);
             }
         }
@@ -492,7 +492,7 @@ class SpotlightView extends WatchUi.WatchFace {
                 dc.setPenWidth(hash_marks_width[i]);
                 // Transparent background so people can get their numbers nice and close
                 // or overlaying lines.
-                dc.setColor(m_color, Gfx.COLOR_TRANSPARENT);
+                dc.setColor(m_color, Graphics.COLOR_TRANSPARENT);
                 // outside X, outside Y, inside X, inside Y
                 var xo = clock_center_x + clock_radius * hash_marks_clock_xo[i];
                 var yo = clock_center_y + clock_radius * hash_marks_clock_yo[i];
@@ -503,11 +503,11 @@ class SpotlightView extends WatchUi.WatchFace {
                 // low power mode
                 if (t_visible && hash_marks_label[i] != "") {
                     // No text in low power, so no need to set a different color
-                    dc.setColor(t_color, Gfx.COLOR_TRANSPARENT);
+                    dc.setColor(t_color, Graphics.COLOR_TRANSPARENT);
                     var text_x = clock_center_x + clock_radius * hash_marks_clock_xo[i] * text_position;
                     var text_y = clock_center_y + clock_radius * hash_marks_clock_yo[i] * text_position;
                     dc.drawText(text_x, text_y, text_font, hash_marks_label[i],
-                                Gfx.TEXT_JUSTIFY_CENTER | Gfx.TEXT_JUSTIFY_VCENTER);
+                                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
                 }
             }
         }
@@ -519,9 +519,9 @@ class SpotlightView extends WatchUi.WatchFace {
         // Again, adding 0.5f to do implicit round instead of floor in
         // drawLine.
         if (low_power) {
-            dc.setColor(hour_line_low_power_color, Gfx.COLOR_TRANSPARENT);
+            dc.setColor(hour_line_low_power_color, Graphics.COLOR_TRANSPARENT);
         } else {
-            dc.setColor(hour_line_color, Gfx.COLOR_TRANSPARENT);
+            dc.setColor(hour_line_color, Graphics.COLOR_TRANSPARENT);
         }
         if (low_power && screen_burn_in_possible) {
             // For burn-in protection on OLED screens, don't draw the hour
@@ -553,9 +553,9 @@ class SpotlightView extends WatchUi.WatchFace {
     function drawNotificationCircle(dc) {
         dc.setPenWidth(3);
         if (low_power) {
-            dc.setColor(hash_mark_low_power_color, Gfx.COLOR_TRANSPARENT);
+            dc.setColor(hash_mark_low_power_color, Graphics.COLOR_TRANSPARENT);
         } else {
-            dc.setColor(hash_mark_color, Gfx.COLOR_TRANSPARENT);
+            dc.setColor(hash_mark_color, Graphics.COLOR_TRANSPARENT);
         }
         // Use screen_height for Y, because there's screens that are
         // wider than they are high
