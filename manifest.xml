@@ -54,7 +54,6 @@
             <iq:product id="marqdriver"/>
             <iq:product id="marqexpedition"/>
             <iq:product id="marqgolfer"/>
-            <iq:product id="smallwearable2021"/>
             <iq:product id="venu"/>
             <iq:product id="venu2"/>
             <iq:product id="venu2s"/>
@@ -70,7 +69,6 @@
             <iq:product id="vivoactive4s"/>
             <iq:product id="vivoactive_hr"/>
             <iq:product id="vivolife"/>
-            <iq:product id="wearable2021"/>
         </iq:products>
         <iq:permissions/>
         <iq:languages>
